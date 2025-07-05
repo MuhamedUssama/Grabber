@@ -19,6 +19,8 @@ import '../../features/home/data/data_source/home_data_source_impl.dart'
     as _i291;
 import '../../features/home/data/repo_impl/home_repository_impl.dart' as _i293;
 import '../../features/home/domain/repository/home_repository.dart' as _i541;
+import '../../features/home/domain/usecases/get_video_info_usecase.dart'
+    as _i1016;
 import '../network/network_module.dart' as _i200;
 import '../network/retrofit_client.dart' as _i74;
 
@@ -40,6 +42,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i541.HomeRepository>(
       () => _i293.HomeRepositoryImpl(gh<_i68.HomeDataSource>()),
+    );
+    gh.factory<_i1016.GetVideoInfoUsecase>(
+      () => _i1016.GetVideoInfoUsecase(gh<_i541.HomeRepository>()),
     );
     return this;
   }
