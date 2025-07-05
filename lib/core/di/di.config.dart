@@ -17,6 +17,8 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart' as _i528;
 import '../../features/home/data/data_source/home_data_source.dart' as _i68;
 import '../../features/home/data/data_source/home_data_source_impl.dart'
     as _i291;
+import '../../features/home/data/repo_impl/home_repository_impl.dart' as _i293;
+import '../../features/home/domain/repository/home_repository.dart' as _i541;
 import '../network/network_module.dart' as _i200;
 import '../network/retrofit_client.dart' as _i74;
 
@@ -35,6 +37,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i68.HomeDataSource>(
       () => _i291.HomeDataSourceImpl(gh<_i74.RetrofitClient>()),
+    );
+    gh.factory<_i541.HomeRepository>(
+      () => _i293.HomeRepositoryImpl(gh<_i68.HomeDataSource>()),
     );
     return this;
   }

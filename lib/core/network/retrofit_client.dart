@@ -12,7 +12,7 @@ part 'retrofit_client.g.dart';
 @RestApi(baseUrl: EndPoints.baseUrl)
 abstract class RetrofitClient {
   @factoryMethod
-  factory RetrofitClient(Dio dio) => _$RetrofitClient;
+  factory RetrofitClient(Dio dio) = _RetrofitClient;
 
   @POST(EndPoints.getInfo)
   Future<GetVideoInfoModel> getVideoInfo(@Body() String url);
