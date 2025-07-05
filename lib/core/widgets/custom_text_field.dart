@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:grabber/core/l10n/localization/app_localizations.dart';
 import 'package:grabber/core/theme/app_colors.dart';
-import 'package:grabber/core/utils/snakbar_utils.dart';
+import 'package:grabber/core/utils/app_services.dart';
+import 'package:grabber/features/home/presentation/view_model/home_screen_view_model.dart';
 
-class CustomTextField extends StatefulWidget {
+class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final String? Function(String?)? validator;
@@ -18,31 +18,9 @@ class CustomTextField extends StatefulWidget {
   });
 
   @override
-  State<CustomTextField> createState() => _CustomTextFieldState();
-}
-
-class _CustomTextFieldState extends State<CustomTextField> {
-  void pasteFromClipboard(BuildContext context) async {
-    final ClipboardData? clipboardData = await Clipboard.getData('text/plain');
-    if (clipboardData != null && clipboardData.text != null) {
-      widget.controller.text = clipboardData.text!;
-
-      SnakBarUtils.showSnakbar(
-        // ignore: use_build_context_synchronously
-        context,
-        Icons.paste,
-        // ignore: use_build_context_synchronously
-        AppLocalizations.of(context)!.paste,
-      );
-    } else {
-      return;
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: widget.controller,
+      controller: controller,
       cursorColor: AppColors.darkTextColor,
       cursorRadius: Radius.circular(16),
       style: GoogleFonts.poppins(
@@ -51,10 +29,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
         fontWeight: FontWeight.w400,
       ),
       textInputAction: TextInputAction.done,
-      validator: widget.validator,
+      validator: validator,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(
-        hintText: widget.hintText,
+        hintText: hintText,
         suffixIcon: _pasteButton(context),
       ),
     );
@@ -63,9 +41,11 @@ class _CustomTextFieldState extends State<CustomTextField> {
   IconButton _pasteButton(BuildContext context) {
     return IconButton(
       onPressed: () {
-        setState(() {
-          pasteFromClipboard(context);
-        });
+        AppServices.pasteFromClipboard(
+          context: context,
+          controller: controller,
+        );
+        context.read<HomeScreenViewModel>().getVideoInfo();
       },
       color: AppColors.darkTextColor,
       splashColor: AppColors.darkHeadTextColor,
