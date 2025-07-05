@@ -17,14 +17,23 @@ dependencies:
     sdk: flutter
   intl: any
   injectable: ^2.5.0
+  retrofit: ^4.5.0
+  logger: ^2.6.0
+  json_annotation: ^4.9.0
+  dio: ^5.8.0+1
+  connectivity_plus: ^6.1.4
+  google_fonts: ^6.2.1
+  flutter_bloc: ^9.1.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^5.0.0
-  build_runner: ^2.5.4
-  injectable_generator: ^2.7.0
+  build_runner:
+  injectable_generator:
+  json_serializable:
+  retrofit_generator:
 
 flutter:
   generate: true

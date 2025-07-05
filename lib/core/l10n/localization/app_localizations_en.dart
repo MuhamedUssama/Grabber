@@ -8,5 +8,9 @@ import 'app_localizations.dart';
 class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
+  @override
+  String get paste => 'Url pasted';
 
+  @override
+  String get url => 'Put url here';
 }

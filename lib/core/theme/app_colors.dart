@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 abstract class AppColors {
   static const Color dark = Color(0xff1e1e1e);
-  static const Color light = Color(0xfffafafc);
+  static const Color white = Color(0xfffafafc);
 
   static const Color darkWithOpacity = Color.fromARGB(255, 45, 45, 45);
 

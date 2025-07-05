@@ -95,6 +95,17 @@ abstract class AppLocalizations {
     Locale('en')
   ];
 
+  /// No description provided for @paste.
+  ///
+  /// In en, this message translates to:
+  /// **'Url pasted'**
+  String get paste;
+
+  /// No description provided for @url.
+  ///
+  /// In en, this message translates to:
+  /// **'Put url here'**
+  String get url;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
