@@ -20,7 +20,6 @@ class CustomTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      cursorColor: AppColors.darkTextColor,
       cursorRadius: Radius.circular(16),
       style: GoogleFonts.poppins(
         color: AppColors.white,

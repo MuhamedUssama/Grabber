@@ -13,4 +13,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get url => 'Put url here';
+
+  @override
+  String get appName => 'Grabber';
+
+  @override
+  String get browse => 'Browse';
 }

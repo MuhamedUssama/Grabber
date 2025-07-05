@@ -1,4 +1,6 @@
 {
   "paste": "Url pasted",
-  "url": "Put url here"
+  "url": "Put url here",
+  "appName": "Grabber",
+  "browse": "Browse"
 }

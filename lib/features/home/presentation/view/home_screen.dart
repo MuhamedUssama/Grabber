@@ -14,32 +14,49 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppLocalizations locale = AppLocalizations.of(context)!;
+    final TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
+          spacing: 24,
           children: [
-            CustomTextField(
-              hintText: locale.url,
-              controller: context.read<HomeScreenViewModel>().controller,
-              validator: (value) => AppValidator.urlValidator(value),
-              suffixIcon: IconButton(
-                onPressed: () {
-                  AppServices.pasteFromClipboard(
-                    context: context,
+            Row(
+              children: [Text(locale.appName, style: textTheme.displayLarge)],
+            ),
+            Row(
+              spacing: 16,
+              children: [
+                Expanded(
+                  child: CustomTextField(
+                    hintText: locale.url,
                     controller: context.read<HomeScreenViewModel>().controller,
-                  );
-                  Future.delayed(Duration(seconds: 1), () {
-                    // ignore: use_build_context_synchronously
-                    context.read<HomeScreenViewModel>().getVideoInfo();
-                  });
-                },
-                color: AppColors.darkTextColor,
-                splashColor: AppColors.darkHeadTextColor,
-                disabledColor: AppColors.darkHeadTextColor,
-                splashRadius: 20,
-                icon: const Icon(Icons.content_paste_rounded),
-              ),
+                    validator: (value) => AppValidator.urlValidator(value),
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        AppServices.pasteFromClipboard(
+                          context: context,
+                          controller:
+                              context.read<HomeScreenViewModel>().controller,
+                        );
+                        Future.delayed(Duration(seconds: 1), () {
+                          // ignore: use_build_context_synchronously
+                          context.read<HomeScreenViewModel>().getVideoInfo();
+                        });
+                      },
+                      color: AppColors.darkTextColor,
+                      splashColor: AppColors.darkHeadTextColor,
+                      disabledColor: AppColors.darkHeadTextColor,
+                      splashRadius: 20,
+                      icon: const Icon(Icons.content_paste_rounded),
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: Text(locale.browse, style: textTheme.labelLarge),
+                ),
+              ],
             ),
           ],
         ),

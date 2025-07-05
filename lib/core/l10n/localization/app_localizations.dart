@@ -106,6 +106,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Put url here'**
   String get url;
+
+  /// No description provided for @appName.
+  ///
+  /// In en, this message translates to:
+  /// **'Grabber'**
+  String get appName;
+
+  /// No description provided for @browse.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse'**
+  String get browse;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
