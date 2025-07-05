@@ -3,9 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grabber/core/l10n/localization/app_localizations.dart';
 import 'package:grabber/core/theme/app_colors.dart';
 import 'package:grabber/core/utils/app_services.dart';
-import 'package:grabber/core/utils/app_validator.dart';
+import 'package:grabber/core/utils/snakbar_utils.dart';
 import 'package:grabber/core/widgets/custom_text_field.dart';
 
+import '../view_model/home_screen_states.dart';
 import '../view_model/home_screen_view_model.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -15,50 +16,69 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppLocalizations locale = AppLocalizations.of(context)!;
     final TextTheme textTheme = Theme.of(context).textTheme;
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          spacing: 24,
-          children: [
-            Row(
-              children: [Text(locale.appName, style: textTheme.displayLarge)],
-            ),
-            Row(
-              spacing: 16,
-              children: [
-                Expanded(
-                  child: CustomTextField(
-                    hintText: locale.url,
-                    controller: context.read<HomeScreenViewModel>().controller,
-                    validator: (value) => AppValidator.urlValidator(value),
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        AppServices.pasteFromClipboard(
-                          context: context,
-                          controller:
-                              context.read<HomeScreenViewModel>().controller,
-                        );
-                        Future.delayed(Duration(seconds: 1), () {
-                          // ignore: use_build_context_synchronously
-                          context.read<HomeScreenViewModel>().getVideoInfo();
-                        });
-                      },
-                      color: AppColors.darkTextColor,
-                      splashColor: AppColors.darkHeadTextColor,
-                      disabledColor: AppColors.darkHeadTextColor,
-                      splashRadius: 20,
-                      icon: const Icon(Icons.content_paste_rounded),
+    return BlocListener<HomeScreenViewModel, HomeScreenStates>(
+      listener: (context, state) {
+        if (state is ValidateUrlState) {
+          SnakBarUtils.showSnakbar(
+            context,
+            Icons.warning_amber_rounded,
+            state.message,
+          );
+        }
+      },
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            spacing: 24,
+            children: [
+              Row(
+                children: [Text(locale.appName, style: textTheme.displayLarge)],
+              ),
+              Row(
+                spacing: 16,
+                children: [
+                  Expanded(
+                    child: CustomTextField(
+                      hintText: locale.url,
+                      controller:
+                          context.read<HomeScreenViewModel>().controller,
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          AppServices.pasteFromClipboard(
+                            context: context,
+                            controller:
+                                context.read<HomeScreenViewModel>().controller,
+                          );
+                        },
+                        color: AppColors.darkTextColor,
+                        splashColor: AppColors.darkHeadTextColor,
+                        disabledColor: AppColors.darkHeadTextColor,
+                        splashRadius: 20,
+                        icon: const Icon(Icons.content_paste_rounded),
+                      ),
                     ),
                   ),
-                ),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: Text(locale.browse, style: textTheme.labelLarge),
-                ),
-              ],
-            ),
-          ],
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: Text(locale.browse, style: textTheme.labelLarge),
+                  ),
+                ],
+              ),
+              Row(
+                spacing: 16,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<HomeScreenViewModel>().getVideoInfo();
+                    },
+                    child: Text(locale.getInfo, style: textTheme.labelLarge),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

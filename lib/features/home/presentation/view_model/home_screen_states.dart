@@ -15,3 +15,8 @@ final class GetVideoInfoErrorState extends HomeScreenStates {
   final String error;
   GetVideoInfoErrorState(this.error);
 }
+
+final class ValidateUrlState extends HomeScreenStates {
+  final String message;
+  ValidateUrlState(this.message);
+}

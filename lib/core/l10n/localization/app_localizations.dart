@@ -118,6 +118,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Browse'**
   String get browse;
+
+  /// No description provided for @getInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Get video info'**
+  String get getInfo;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

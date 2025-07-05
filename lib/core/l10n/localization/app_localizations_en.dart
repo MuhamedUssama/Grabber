@@ -19,4 +19,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get browse => 'Browse';
+
+  @override
+  String get getInfo => 'Get video info';
 }

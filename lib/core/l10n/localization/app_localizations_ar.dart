@@ -19,4 +19,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get browse => 'تصفح';
+
+  @override
+  String get getInfo => 'تفاصيل الفيديو';
 }

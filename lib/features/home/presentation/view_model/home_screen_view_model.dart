@@ -17,6 +17,12 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
     try {
       emit(GetVideoInfoLoadingState());
 
+      final String? validationMessage = _urlValidator(controller.text);
+      if (validationMessage != null) {
+        emit(ValidateUrlState(validationMessage));
+        return;
+      }
+
       final GetVideoInfoRequest request = GetVideoInfoRequest(
         url: controller.text,
       );
@@ -30,5 +36,21 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
     } catch (exception) {
       emit(GetVideoInfoErrorState(exception.toString()));
     }
+  }
+
+  String? _urlValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'This field can not be empty';
+    }
+
+    final RegExp urlRegex = RegExp(
+      r'^(https?://)?([\w-]+\.)+[\w-]+(/[\w-./?%&=]*)?$',
+      caseSensitive: false,
+    );
+
+    if (!urlRegex.hasMatch(value)) {
+      return 'Invalid url';
+    }
+    return null;
   }
 }
