@@ -22,7 +22,7 @@ class Grabber extends StatelessWidget {
       theme: AppTheme.darkTheme,
       supportedLocales: [Locale('en'), Locale('ar')],
       routes: AppRouter.routes(),
-      initialRoute: RoutesName.homeScreen,
+      initialRoute: RoutesName.splashScreen,
     );
   }
 }

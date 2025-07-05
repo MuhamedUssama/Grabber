@@ -1,0 +1,17 @@
+import 'package:grabber/features/home/data/models/response/get_video_info_model.dart';
+
+sealed class HomeScreenStates {}
+
+final class HomeScreenInitialState extends HomeScreenStates {}
+
+final class GetVideoInfoLoadingState extends HomeScreenStates {}
+
+final class GetVideoInfoSuccessState extends HomeScreenStates {
+  final GetVideoInfoModel videoInfo;
+  GetVideoInfoSuccessState(this.videoInfo);
+}
+
+final class GetVideoInfoErrorState extends HomeScreenStates {
+  final String error;
+  GetVideoInfoErrorState(this.error);
+}

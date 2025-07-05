@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:grabber/core/network/exceptions.dart';
+import 'package:grabber/features/home/data/models/request/get_video_info_request.dart';
 import 'package:grabber/features/home/domain/repository/home_repository.dart';
 import 'package:injectable/injectable.dart';
 
@@ -11,6 +12,7 @@ class GetVideoInfoUsecase {
 
   GetVideoInfoUsecase(this._repository);
 
-  Future<Either<ServerException, GetVideoInfoModel>> call(String url) async =>
-      _repository.getVideoInfo(url);
+  Future<Either<ServerException, GetVideoInfoModel>> call(
+    GetVideoInfoRequest url,
+  ) async => _repository.getVideoInfo(url);
 }

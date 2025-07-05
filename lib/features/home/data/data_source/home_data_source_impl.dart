@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:grabber/core/network/exceptions.dart';
 import 'package:grabber/core/network/retrofit_client.dart';
 import 'package:grabber/features/home/data/data_source/home_data_source.dart';
+import 'package:grabber/features/home/data/models/request/get_video_info_request.dart';
 import 'package:grabber/features/home/data/models/response/get_video_info_model.dart';
 import 'package:injectable/injectable.dart';
 
@@ -16,7 +17,7 @@ class HomeDataSourceImpl implements HomeDataSource {
 
   @override
   Future<Either<ServerException, GetVideoInfoModel>> getVideoInfo(
-    String url,
+    GetVideoInfoRequest url,
   ) async {
     try {
       GetVideoInfoModel response = await _retrofitClient.getVideoInfo(url);

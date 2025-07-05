@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:grabber/core/network/exceptions.dart';
 import 'package:grabber/core/utils/connectivity_helper.dart';
+import 'package:grabber/features/home/data/models/request/get_video_info_request.dart';
 import 'package:grabber/features/home/data/models/response/get_video_info_model.dart';
 import 'package:grabber/features/home/domain/repository/home_repository.dart';
 import 'package:injectable/injectable.dart';
@@ -15,7 +16,7 @@ class HomeRepositoryImpl implements HomeRepository {
 
   @override
   Future<Either<ServerException, GetVideoInfoModel>> getVideoInfo(
-    String url,
+    GetVideoInfoRequest url,
   ) async {
     if (await ConnectivityHelper.checkInternetConnection()) {
       final either = await _dataSource.getVideoInfo(url);

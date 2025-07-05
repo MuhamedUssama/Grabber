@@ -20,11 +20,12 @@ class _RetrofitClient implements RetrofitClient {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<GetVideoInfoModel> getVideoInfo(String url) async {
+  Future<GetVideoInfoModel> getVideoInfo(GetVideoInfoRequest request) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = url;
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
     final _options = _setStreamType<GetVideoInfoModel>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
