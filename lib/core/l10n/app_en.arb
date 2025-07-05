@@ -3,5 +3,8 @@
   "url": "Put url here",
   "appName": "Grabber",
   "browse": "Browse",
-  "getInfo": "Get video info"
+  "getInfo": "Get video info",
+  "folderSelected": "Folder selected successfully",
+  "noFolderSelected": "No folder selected",
+  "somethingWentWorng": "Something went wrong"
 }

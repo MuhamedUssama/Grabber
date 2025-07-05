@@ -22,4 +22,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get getInfo => 'Get video info';
+
+  @override
+  String get folderSelected => 'Folder selected successfully';
+
+  @override
+  String get noFolderSelected => 'No folder selected';
+
+  @override
+  String get somethingWentWorng => 'Something went wrong';
 }

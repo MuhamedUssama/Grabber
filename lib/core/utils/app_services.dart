@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:grabber/core/l10n/localization/app_localizations.dart';
@@ -13,10 +15,8 @@ abstract class AppServices {
       controller.text = clipboardData.text!;
 
       SnakBarUtils.showSnakbar(
-        // ignore: use_build_context_synchronously
         context,
         Icons.paste,
-        // ignore: use_build_context_synchronously
         AppLocalizations.of(context)!.paste,
       );
     } else {

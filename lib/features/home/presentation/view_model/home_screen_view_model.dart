@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grabber/features/home/data/models/request/get_video_info_request.dart';
@@ -12,6 +15,8 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
   HomeScreenViewModel(this._videoInfoUsecase) : super(HomeScreenInitialState());
 
   final TextEditingController controller = TextEditingController();
+
+  String? path;
 
   Future<void> getVideoInfo() async {
     try {
@@ -52,5 +57,21 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
       return 'Invalid url';
     }
     return null;
+  }
+
+  Future<void> pickFolderPath() async {
+    try {
+      String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+
+      if (selectedDirectory != null) {
+        path = selectedDirectory;
+        emit(SelectFolderPathSuccessState());
+      } else {
+        emit(SelectFolderPathFailureState(null));
+      }
+    } catch (error) {
+      log("Error from pick folder: $error");
+      emit(SelectFolderPathFailureState("Somthing went wrong"));
+    }
   }
 }

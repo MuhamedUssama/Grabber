@@ -124,6 +124,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Get video info'**
   String get getInfo;
+
+  /// No description provided for @folderSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder selected successfully'**
+  String get folderSelected;
+
+  /// No description provided for @noFolderSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'No folder selected'**
+  String get noFolderSelected;
+
+  /// No description provided for @somethingWentWorng.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get somethingWentWorng;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

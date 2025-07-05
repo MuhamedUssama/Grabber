@@ -5,6 +5,7 @@ import 'package:grabber/core/theme/app_colors.dart';
 import 'package:grabber/core/utils/app_services.dart';
 import 'package:grabber/core/utils/snakbar_utils.dart';
 import 'package:grabber/core/widgets/custom_text_field.dart';
+import 'package:grabber/features/home/presentation/widgets/folder_path_widget.dart';
 
 import '../view_model/home_screen_states.dart';
 import '../view_model/home_screen_view_model.dart';
@@ -23,6 +24,20 @@ class HomeScreen extends StatelessWidget {
             context,
             Icons.warning_amber_rounded,
             state.message,
+          );
+        } else if (state is GetVideoInfoErrorState) {
+          SnakBarUtils.showSnakbar(context, Icons.error, state.error);
+        } else if (state is SelectFolderPathSuccessState) {
+          SnakBarUtils.showSnakbar(
+            context,
+            Icons.folder,
+            locale.folderSelected,
+          );
+        } else if (state is SelectFolderPathFailureState) {
+          SnakBarUtils.showSnakbar(
+            context,
+            Icons.warning_amber_rounded,
+            state.message ?? locale.noFolderSelected,
           );
         }
       },
@@ -60,11 +75,14 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      context.read<HomeScreenViewModel>().pickFolderPath();
+                    },
                     child: Text(locale.browse, style: textTheme.labelLarge),
                   ),
                 ],
               ),
+              const FolderPathWidget(),
               Row(
                 spacing: 16,
                 mainAxisAlignment: MainAxisAlignment.center,

@@ -22,4 +22,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get getInfo => 'تفاصيل الفيديو';
+
+  @override
+  String get folderSelected => 'تم تحديد المجلد بنجاح';
+
+  @override
+  String get noFolderSelected => 'لم يتم تحديد أي مجلد';
+
+  @override
+  String get somethingWentWorng => 'حدث خطأ ما';
 }

@@ -20,3 +20,10 @@ final class ValidateUrlState extends HomeScreenStates {
   final String message;
   ValidateUrlState(this.message);
 }
+
+final class SelectFolderPathSuccessState extends HomeScreenStates {}
+
+final class SelectFolderPathFailureState extends HomeScreenStates {
+  final String? message;
+  SelectFolderPathFailureState(this.message);
+}

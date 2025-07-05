@@ -17,6 +17,11 @@ abstract class AppTheme {
         fontSize: 16,
         fontWeight: FontWeight.w400,
       ),
+      bodySmall: GoogleFonts.poppins(
+        color: AppColors.darkTextColor,
+        fontSize: 12,
+        fontWeight: FontWeight.w400,
+      ),
     ),
 
     textSelectionTheme: TextSelectionThemeData(
