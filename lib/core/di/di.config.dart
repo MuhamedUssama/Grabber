@@ -19,6 +19,12 @@ import '../../features/home/data/data_source/home_data_source_impl.dart'
     as _i291;
 import '../../features/home/data/repo_impl/home_repository_impl.dart' as _i293;
 import '../../features/home/domain/repository/home_repository.dart' as _i541;
+import '../../features/home/domain/usecases/download_audio_usecase.dart'
+    as _i898;
+import '../../features/home/domain/usecases/download_video_usecase.dart'
+    as _i513;
+import '../../features/home/domain/usecases/download_video_without_audio_usecase.dart'
+    as _i117;
 import '../../features/home/domain/usecases/get_video_info_usecase.dart'
     as _i1016;
 import '../../features/home/presentation/view_model/home_screen_view_model.dart'
@@ -47,6 +53,15 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i1016.GetVideoInfoUsecase>(
       () => _i1016.GetVideoInfoUsecase(gh<_i541.HomeRepository>()),
+    );
+    gh.factory<_i898.DownloadAudioUsecase>(
+      () => _i898.DownloadAudioUsecase(gh<_i541.HomeRepository>()),
+    );
+    gh.factory<_i513.DownloadVideoUsecase>(
+      () => _i513.DownloadVideoUsecase(gh<_i541.HomeRepository>()),
+    );
+    gh.factory<_i117.DownloadVideoWithoutAudioUsecase>(
+      () => _i117.DownloadVideoWithoutAudioUsecase(gh<_i541.HomeRepository>()),
     );
     gh.factory<_i181.HomeScreenViewModel>(
       () => _i181.HomeScreenViewModel(gh<_i1016.GetVideoInfoUsecase>()),
