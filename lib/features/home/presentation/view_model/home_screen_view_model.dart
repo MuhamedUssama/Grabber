@@ -19,6 +19,7 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
 
   String? path;
   String? videoTitle;
+  String? quality;
   List<Streams> streams = [];
 
   Future<void> getVideoInfo() async {
@@ -86,14 +87,23 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
       final List<String> resolutions =
           streams
               .map((stream) => stream.resolution)
-              .where((res) => res != null && res.isNotEmpty)
+              .where((res) {
+                if (res == null || res.isEmpty) return false;
+                if (res.toLowerCase() == "audio") return false;
+
+                final String numPart = res.replaceAll('p', '');
+                final int? resolutionValue = int.tryParse(numPart);
+
+                if (resolutionValue == null) return false;
+                return resolutionValue >= 144;
+              })
               .cast<String>()
               .toSet()
               .toList();
 
       emit(GetAvalibleResloutionsState(resolutions));
     } else {
-      emit(GetVideoInfoEmptyState('There is no avalible data of this video'));
+      emit(GetVideoInfoEmptyState('There is no available data of this video'));
     }
   }
 }
