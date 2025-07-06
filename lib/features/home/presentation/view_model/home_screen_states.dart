@@ -27,3 +27,13 @@ final class SelectFolderPathFailureState extends HomeScreenStates {
   final String? message;
   SelectFolderPathFailureState(this.message);
 }
+
+final class GetAvalibleResloutionsState extends HomeScreenStates {
+  final List<String> resolutions;
+  GetAvalibleResloutionsState(this.resolutions);
+}
+
+final class GetVideoInfoEmptyState extends HomeScreenStates {
+  final String message;
+  GetVideoInfoEmptyState(this.message);
+}

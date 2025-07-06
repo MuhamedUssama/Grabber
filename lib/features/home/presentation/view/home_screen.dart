@@ -9,6 +9,7 @@ import 'package:grabber/features/home/presentation/widgets/folder_path_widget.da
 
 import '../view_model/home_screen_states.dart';
 import '../view_model/home_screen_view_model.dart';
+import '../widgets/resolution_section.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -95,6 +96,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ],
               ),
+              const ResolutionSection(),
             ],
           ),
         ),

@@ -5,6 +5,7 @@ import 'package:grabber/core/theme/app_colors.dart';
 abstract class AppTheme {
   static ThemeData darkTheme = ThemeData(
     scaffoldBackgroundColor: AppColors.dark,
+    primaryColor: AppColors.darkTextColor,
 
     textTheme: TextTheme(
       displayLarge: GoogleFonts.righteous(
@@ -14,6 +15,11 @@ abstract class AppTheme {
       ),
       labelLarge: GoogleFonts.poppins(
         color: AppColors.dark,
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+      ),
+      bodyMedium: GoogleFonts.poppins(
+        color: AppColors.darkTextColor,
         fontSize: 16,
         fontWeight: FontWeight.w400,
       ),
@@ -41,6 +47,25 @@ abstract class AppTheme {
         ),
         overlayColor: WidgetStateProperty.all(
           AppColors.dark.withValues(alpha: 0.1),
+        ),
+      ),
+    ),
+
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: WidgetStateProperty.all(AppColors.transparent),
+        foregroundColor: WidgetStateProperty.all(AppColors.darkTextColor),
+        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+            side: BorderSide(color: AppColors.darkTextColor),
+          ),
+        ),
+        padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
+          EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+        ),
+        overlayColor: WidgetStateProperty.all(
+          AppColors.darkTextColor.withValues(alpha: 0.2),
         ),
       ),
     ),

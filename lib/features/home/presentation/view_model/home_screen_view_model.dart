@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grabber/features/home/data/models/request/get_video_info_request.dart';
+import 'package:grabber/features/home/data/models/response/get_video_info_model.dart';
 import 'package:grabber/features/home/domain/usecases/get_video_info_usecase.dart';
 import 'package:injectable/injectable.dart';
 
@@ -17,6 +18,8 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
   final TextEditingController controller = TextEditingController();
 
   String? path;
+  String? videoTitle;
+  List<Streams> streams = [];
 
   Future<void> getVideoInfo() async {
     try {
@@ -34,10 +37,14 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
 
       final result = await _videoInfoUsecase(request);
 
-      result.fold(
-        (error) => emit(GetVideoInfoErrorState(error.message!)),
-        (videoInfo) => emit(GetVideoInfoSuccessState(videoInfo)),
-      );
+      result.fold((error) => emit(GetVideoInfoErrorState(error.message!)), (
+        videoInfo,
+      ) {
+        videoTitle = videoInfo.title;
+        streams.addAll(videoInfo.streams ?? []);
+        getResolutions();
+        emit(GetVideoInfoSuccessState(videoInfo));
+      });
     } catch (exception) {
       emit(GetVideoInfoErrorState(exception.toString()));
     }
@@ -71,7 +78,22 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
       }
     } catch (error) {
       log("Error from pick folder: $error");
-      emit(SelectFolderPathFailureState("Somthing went wrong"));
+    }
+  }
+
+  Future<void> getResolutions() async {
+    if (streams.isNotEmpty) {
+      final List<String> resolutions =
+          streams
+              .map((stream) => stream.resolution)
+              .where((res) => res != null && res.isNotEmpty)
+              .cast<String>()
+              .toSet()
+              .toList();
+
+      emit(GetAvalibleResloutionsState(resolutions));
+    } else {
+      emit(GetVideoInfoEmptyState('There is no avalible data of this video'));
     }
   }
 }
