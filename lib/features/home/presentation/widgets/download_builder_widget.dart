@@ -10,25 +10,31 @@ class DownloadBuilderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final TextTheme textTheme = Theme.of(context).textTheme;
-
     return BlocBuilder<HomeScreenViewModel, HomeScreenStates>(
       buildWhen:
           (previous, current) =>
               current is DownloadAudioLoadingState ||
-              current is DownloadAudioSuccessState,
+              current is DownloadAudioSuccessState ||
+              current is DownloadVideoLoadingState ||
+              current is DownloadVideoSuccessState,
+
       builder: (context, state) {
-        if (state is DownloadAudioLoadingState) {
+        if (state is DownloadAudioLoadingState ||
+            state is DownloadVideoLoadingState) {
           return Expanded(
             child: LottieBuilder.asset(AppAnimations.dynamicLoading),
           );
-        } else if (state is DownloadAudioSuccessState) {
-          return Visibility(
+        } else if (state is DownloadAudioSuccessState ||
+            state is DownloadVideoSuccessState) {
+          return const Visibility(
             visible: false,
-            child: const SizedBox(height: 0, width: 0),
+            child: SizedBox(height: 0, width: 0),
           );
         } else {
-          return const SizedBox(height: 0, width: 0);
+          return const Visibility(
+            visible: false,
+            child: SizedBox(height: 0, width: 0),
+          );
         }
       },
     );

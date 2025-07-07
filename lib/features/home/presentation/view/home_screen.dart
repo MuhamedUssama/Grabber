@@ -61,6 +61,14 @@ class HomeScreen extends StatelessWidget {
             Icons.check_circle_outline_rounded,
             'Audio downloaded successfully in ${context.read<HomeScreenViewModel>().path}',
           );
+        } else if (state is DownloadVideoSuccessState) {
+          SnakBarUtils.showSnakbar(
+            context,
+            Icons.check_circle_outline_rounded,
+            'Video downloaded successfully in ${context.read<HomeScreenViewModel>().path}',
+          );
+        } else if (state is GetDownloadsDirectoryFailureState) {
+          SnakBarUtils.showSnakbar(context, Icons.error_rounded, state.error);
         }
       },
       child: Scaffold(
@@ -123,6 +131,16 @@ class HomeScreen extends StatelessWidget {
                     },
                     child: Text(
                       locale.downloadAudio,
+                      style: textTheme.labelLarge,
+                    ),
+                  ),
+
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<HomeScreenViewModel>().downloadVideo();
+                    },
+                    child: Text(
+                      locale.downloadVideo,
                       style: textTheme.labelLarge,
                     ),
                   ),

@@ -75,3 +75,8 @@ final class DownloadVideoWithoutAudioFailureState extends HomeScreenStates {
   final String? error;
   DownloadVideoWithoutAudioFailureState(this.error);
 }
+
+final class GetDownloadsDirectoryFailureState extends HomeScreenStates {
+  final String error;
+  GetDownloadsDirectoryFailureState(this.error);
+}

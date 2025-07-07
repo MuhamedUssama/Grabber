@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grabber/features/home/data/models/request/download_audio_request_model.dart';
+import 'package:grabber/features/home/data/models/request/download_video_request_model.dart';
 import 'package:grabber/features/home/data/models/request/get_video_info_request.dart';
 import 'package:grabber/features/home/data/models/response/get_video_info_model.dart';
 import 'package:grabber/features/home/domain/usecases/download_audio_usecase.dart';
@@ -66,22 +67,6 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
     }
   }
 
-  String? _urlValidator(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'This field can not be empty';
-    }
-
-    final RegExp urlRegex = RegExp(
-      r'^(https?://)?([\w-]+\.)+[\w-]+(/[\w-./?%&=]*)?$',
-      caseSensitive: false,
-    );
-
-    if (!urlRegex.hasMatch(value)) {
-      return 'Invalid url';
-    }
-    return null;
-  }
-
   Future<void> pickFolderPath() async {
     try {
       String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
@@ -132,14 +117,7 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
 
       emit(DownloadAudioLoadingState());
 
-      if (path == null) {
-        final Directory? directory = await getDownloadsDirectory();
-        if (directory == null) {
-          emit(DownloadAudioFailureState('Unable to access Downloads folder'));
-          return;
-        }
-        path = directory.path;
-      }
+      await _getDownloadDirectory();
 
       DownloadAudioRequestModel request = DownloadAudioRequestModel(
         url: controller.text,
@@ -154,6 +132,77 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
       );
     } catch (error) {
       emit(DownloadAudioFailureState(error.toString()));
+    }
+  }
+
+  Future<void> downloadVideo() async {
+    try {
+      final String? validationMessage = _urlValidator(controller.text);
+      if (validationMessage != null) {
+        emit(ValidateUrlState(validationMessage));
+        return;
+      }
+
+      log('Quality of video is: $quality');
+
+      if (quality == null) {
+        emit(
+          DownloadVideoFailureState(
+            'Choose the quality which you preffer first',
+          ),
+        );
+        return;
+      }
+
+      emit(DownloadVideoLoadingState());
+
+      await _getDownloadDirectory();
+
+      final DownloadVideoRequestModel request = DownloadVideoRequestModel(
+        url: controller.text,
+        outputDir: path,
+        quality: quality,
+      );
+
+      final result = await _videoUsecase(request);
+
+      result.fold(
+        (error) => emit(DownloadVideoFailureState(error.toString())),
+        (videoResponse) => emit(DownloadVideoSuccessState(videoResponse)),
+      );
+    } catch (error) {
+      emit(DownloadVideoFailureState(error.toString()));
+    }
+  }
+
+  String? _urlValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'This field can not be empty';
+    }
+
+    final RegExp urlRegex = RegExp(
+      r'^(https?://)?([\w-]+\.)+[\w-]+(/[\w-./?%&=]*)?$',
+      caseSensitive: false,
+    );
+
+    if (!urlRegex.hasMatch(value)) {
+      return 'Invalid url';
+    }
+    return null;
+  }
+
+  Future<void> _getDownloadDirectory() async {
+    if (path == null) {
+      final Directory? directory = await getDownloadsDirectory();
+      if (directory == null) {
+        emit(
+          GetDownloadsDirectoryFailureState(
+            'Unable to access Downloads folder',
+          ),
+        );
+        return;
+      }
+      path = directory.path;
     }
   }
 }

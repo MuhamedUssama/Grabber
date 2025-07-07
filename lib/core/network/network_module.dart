@@ -9,8 +9,8 @@ abstract class NetworkModule {
   Dio provideDio() {
     Dio dio = Dio();
 
-    dio.options.connectTimeout = const Duration(seconds: 60);
-    dio.options.receiveTimeout = const Duration(seconds: 60);
+    dio.options.connectTimeout = const Duration(days: 1);
+    dio.options.receiveTimeout = const Duration(days: 1);
     dio.interceptors.add(getIt<PrettyDioLogger>());
 
     return dio;
