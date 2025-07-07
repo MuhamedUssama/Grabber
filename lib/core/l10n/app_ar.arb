@@ -1,0 +1,14 @@
+{
+  "paste": "تم لصق الرابط",
+  "url": "ضع الرابط هنا",
+  "appName": "Grabber",
+  "browse": "تصفح",
+  "getInfo": "تفاصيل الفيديو",
+  "folderSelected": "تم تحديد المجلد بنجاح",
+  "noFolderSelected": "لم يتم تحديد أي مجلد",
+  "somethingWentWorng": "حدث خطأ ما",
+  "downloadAudio": "تحميل المقطع الصوتي",
+  "downloadVideo": "تحميل الفيديو",
+  "downloadVideoWithoutAudio": "تحميل الفيديو بدون صوت",
+  "appVersion": "Version 1.0.0 Developed by: Mohamed Osama © 2025 Mohamed Osama. All rights reserved."
+}

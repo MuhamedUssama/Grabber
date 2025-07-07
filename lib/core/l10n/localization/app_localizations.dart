@@ -95,6 +95,77 @@ abstract class AppLocalizations {
     Locale('en')
   ];
 
+  /// No description provided for @paste.
+  ///
+  /// In en, this message translates to:
+  /// **'Url pasted'**
+  String get paste;
+
+  /// No description provided for @url.
+  ///
+  /// In en, this message translates to:
+  /// **'Put url here'**
+  String get url;
+
+  /// No description provided for @appName.
+  ///
+  /// In en, this message translates to:
+  /// **'Grabber'**
+  String get appName;
+
+  /// No description provided for @browse.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse'**
+  String get browse;
+
+  /// No description provided for @getInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Get video resolutions'**
+  String get getInfo;
+
+  /// No description provided for @folderSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder selected successfully'**
+  String get folderSelected;
+
+  /// No description provided for @noFolderSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'No folder selected'**
+  String get noFolderSelected;
+
+  /// No description provided for @somethingWentWorng.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get somethingWentWorng;
+
+  /// No description provided for @downloadAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Download audio'**
+  String get downloadAudio;
+
+  /// No description provided for @downloadVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Download video'**
+  String get downloadVideo;
+
+  /// No description provided for @downloadVideoWithoutAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Download video without audio'**
+  String get downloadVideoWithoutAudio;
+
+  /// No description provided for @appVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version 1.0.0 Developed by: Mohamed Osama © 2025 Mohamed Osama. All rights reserved.'**
+  String get appVersion;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
