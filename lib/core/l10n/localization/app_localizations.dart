@@ -122,7 +122,7 @@ abstract class AppLocalizations {
   /// No description provided for @getInfo.
   ///
   /// In en, this message translates to:
-  /// **'Get video info'**
+  /// **'Get video resolutions'**
   String get getInfo;
 
   /// No description provided for @folderSelected.

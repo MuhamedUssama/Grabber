@@ -27,6 +27,11 @@ class UrlAndBrowseWidget extends StatelessWidget {
                   context: context,
                   controller: context.read<HomeScreenViewModel>().controller,
                 );
+
+                Future.delayed(Duration(seconds: 1), () {
+                  // ignore: use_build_context_synchronously
+                  context.read<HomeScreenViewModel>().getVideoInfo();
+                });
               },
               color: AppColors.darkTextColor,
               splashColor: AppColors.darkHeadTextColor,

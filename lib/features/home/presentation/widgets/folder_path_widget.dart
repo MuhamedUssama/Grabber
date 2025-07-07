@@ -37,7 +37,7 @@ class FolderPathWidget extends StatelessWidget {
                 (previous, current) => current is UpdateQualityValueState,
             builder: (context, state) {
               return Text(
-                'Quality selected: ${context.read<HomeScreenViewModel>().quality!}',
+                'Resolution selected: ${context.read<HomeScreenViewModel>().quality!}',
                 style: textTheme.bodySmall,
                 textAlign: TextAlign.start,
               );

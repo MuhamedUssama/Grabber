@@ -21,7 +21,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get browse => 'Browse';
 
   @override
-  String get getInfo => 'Get video info';
+  String get getInfo => 'Get video resolutions';
 
   @override
   String get folderSelected => 'Folder selected successfully';
