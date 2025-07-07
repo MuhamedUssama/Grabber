@@ -64,7 +64,12 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i117.DownloadVideoWithoutAudioUsecase(gh<_i541.HomeRepository>()),
     );
     gh.factory<_i181.HomeScreenViewModel>(
-      () => _i181.HomeScreenViewModel(gh<_i1016.GetVideoInfoUsecase>()),
+      () => _i181.HomeScreenViewModel(
+        gh<_i1016.GetVideoInfoUsecase>(),
+        gh<_i898.DownloadAudioUsecase>(),
+        gh<_i513.DownloadVideoUsecase>(),
+        gh<_i117.DownloadVideoWithoutAudioUsecase>(),
+      ),
     );
     return this;
   }

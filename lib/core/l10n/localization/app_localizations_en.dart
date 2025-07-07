@@ -31,4 +31,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get somethingWentWorng => 'Something went wrong';
+
+  @override
+  String get downloadAudio => 'Download audio';
+
+  @override
+  String get downloadVideo => 'Download video';
+
+  @override
+  String get downloadVideoWithoutAudio => 'Download video without audio';
 }

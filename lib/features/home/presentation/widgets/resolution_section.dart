@@ -20,8 +20,12 @@ class ResolutionSection extends StatelessWidget {
               current is GetVideoInfoEmptyState,
       builder: (context, state) {
         if (state is GetVideoInfoLoadingState) {
-          return CircularProgressIndicator(
-            color: Theme.of(context).primaryColor,
+          return Expanded(
+            child: Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).primaryColor,
+              ),
+            ),
           );
         } else if (state is GetVideoInfoEmptyState) {
           return Center(

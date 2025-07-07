@@ -1,36 +1,51 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:grabber/features/home/data/models/request/download_audio_request_model.dart';
 import 'package:grabber/features/home/data/models/request/get_video_info_request.dart';
 import 'package:grabber/features/home/data/models/response/get_video_info_model.dart';
+import 'package:grabber/features/home/domain/usecases/download_audio_usecase.dart';
+import 'package:grabber/features/home/domain/usecases/download_video_usecase.dart';
+import 'package:grabber/features/home/domain/usecases/download_video_without_audio_usecase.dart';
 import 'package:grabber/features/home/domain/usecases/get_video_info_usecase.dart';
 import 'package:injectable/injectable.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'home_screen_states.dart';
 
 @injectable
 class HomeScreenViewModel extends Cubit<HomeScreenStates> {
   final GetVideoInfoUsecase _videoInfoUsecase;
-  HomeScreenViewModel(this._videoInfoUsecase) : super(HomeScreenInitialState());
+  final DownloadAudioUsecase _audioUsecase;
+  final DownloadVideoUsecase _videoUsecase;
+  final DownloadVideoWithoutAudioUsecase _videoWithoutAudioUsecase;
 
-  final TextEditingController controller = TextEditingController();
+  HomeScreenViewModel(
+    this._videoInfoUsecase,
+    this._audioUsecase,
+    this._videoUsecase,
+    this._videoWithoutAudioUsecase,
+  ) : super(HomeScreenInitialState());
 
   String? path;
   String? videoTitle;
   String? quality;
   List<Streams> streams = [];
 
+  final TextEditingController controller = TextEditingController();
+
   Future<void> getVideoInfo() async {
     try {
-      emit(GetVideoInfoLoadingState());
-
       final String? validationMessage = _urlValidator(controller.text);
       if (validationMessage != null) {
         emit(ValidateUrlState(validationMessage));
         return;
       }
+
+      emit(GetVideoInfoLoadingState());
 
       final GetVideoInfoRequest request = GetVideoInfoRequest(
         url: controller.text,
@@ -104,6 +119,41 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
       emit(GetAvalibleResloutionsState(resolutions));
     } else {
       emit(GetVideoInfoEmptyState('There is no available data of this video'));
+    }
+  }
+
+  Future<void> downloadAudio() async {
+    try {
+      final String? validationMessage = _urlValidator(controller.text);
+      if (validationMessage != null) {
+        emit(ValidateUrlState(validationMessage));
+        return;
+      }
+
+      emit(DownloadAudioLoadingState());
+
+      if (path == null) {
+        final Directory? directory = await getDownloadsDirectory();
+        if (directory == null) {
+          emit(DownloadAudioFailureState('Unable to access Downloads folder'));
+          return;
+        }
+        path = directory.path;
+      }
+
+      DownloadAudioRequestModel request = DownloadAudioRequestModel(
+        url: controller.text,
+        outputDir: path,
+      );
+
+      final result = await _audioUsecase(request);
+
+      result.fold(
+        (error) => emit(DownloadAudioFailureState(error.toString())),
+        (audioResponse) => emit(DownloadAudioSuccessState(audioResponse)),
+      );
+    } catch (error) {
+      emit(DownloadAudioFailureState(error.toString()));
     }
   }
 }

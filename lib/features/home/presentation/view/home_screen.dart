@@ -9,6 +9,7 @@ import 'package:grabber/features/home/presentation/widgets/folder_path_widget.da
 
 import '../view_model/home_screen_states.dart';
 import '../view_model/home_screen_view_model.dart';
+import '../widgets/download_builder_widget.dart';
 import '../widgets/resolution_section.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -21,11 +22,7 @@ class HomeScreen extends StatelessWidget {
     return BlocListener<HomeScreenViewModel, HomeScreenStates>(
       listener: (context, state) {
         if (state is ValidateUrlState) {
-          SnakBarUtils.showSnakbar(
-            context,
-            Icons.warning_amber_rounded,
-            state.message,
-          );
+          SnakBarUtils.showSnakbar(context, Icons.error_rounded, state.message);
         } else if (state is GetVideoInfoErrorState) {
           SnakBarUtils.showSnakbar(context, Icons.error, state.error);
         } else if (state is SelectFolderPathSuccessState) {
@@ -37,8 +34,32 @@ class HomeScreen extends StatelessWidget {
         } else if (state is SelectFolderPathFailureState) {
           SnakBarUtils.showSnakbar(
             context,
-            Icons.warning_amber_rounded,
+            Icons.error_rounded,
             state.message ?? locale.noFolderSelected,
+          );
+        } else if (state is DownloadAudioFailureState) {
+          SnakBarUtils.showSnakbar(
+            context,
+            Icons.error_rounded,
+            state.error ?? locale.somethingWentWorng,
+          );
+        } else if (state is DownloadVideoFailureState) {
+          SnakBarUtils.showSnakbar(
+            context,
+            Icons.error_rounded,
+            state.error ?? locale.somethingWentWorng,
+          );
+        } else if (state is DownloadVideoWithoutAudioFailureState) {
+          SnakBarUtils.showSnakbar(
+            context,
+            Icons.error_rounded,
+            state.error ?? locale.somethingWentWorng,
+          );
+        } else if (state is DownloadAudioSuccessState) {
+          SnakBarUtils.showSnakbar(
+            context,
+            Icons.check_circle_outline_rounded,
+            'Audio downloaded successfully in ${context.read<HomeScreenViewModel>().path}',
           );
         }
       },
@@ -84,9 +105,10 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
               const FolderPathWidget(),
-              Row(
+              Wrap(
                 spacing: 16,
-                mainAxisAlignment: MainAxisAlignment.center,
+                runSpacing: 16,
+                alignment: WrapAlignment.center,
                 children: [
                   ElevatedButton(
                     onPressed: () {
@@ -94,9 +116,20 @@ class HomeScreen extends StatelessWidget {
                     },
                     child: Text(locale.getInfo, style: textTheme.labelLarge),
                   ),
+
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<HomeScreenViewModel>().downloadAudio();
+                    },
+                    child: Text(
+                      locale.downloadAudio,
+                      style: textTheme.labelLarge,
+                    ),
+                  ),
                 ],
               ),
-              const ResolutionSection(),
+              ResolutionSection(),
+              const DownloadBuilderWidget(),
             ],
           ),
         ),

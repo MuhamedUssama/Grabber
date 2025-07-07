@@ -6,5 +6,8 @@
   "getInfo": "تفاصيل الفيديو",
   "folderSelected": "تم تحديد المجلد بنجاح",
   "noFolderSelected": "لم يتم تحديد أي مجلد",
-  "somethingWentWorng": "حدث خطأ ما"
+  "somethingWentWorng": "حدث خطأ ما",
+  "downloadAudio": "تحميل المقطع الصوتي",
+  "downloadVideo": "تحميل الفيديو",
+  "downloadVideoWithoutAudio": "تحميل الفيديو بدون صوت"
 }

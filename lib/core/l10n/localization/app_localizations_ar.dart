@@ -31,4 +31,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get somethingWentWorng => 'حدث خطأ ما';
+
+  @override
+  String get downloadAudio => 'تحميل المقطع الصوتي';
+
+  @override
+  String get downloadVideo => 'تحميل الفيديو';
+
+  @override
+  String get downloadVideoWithoutAudio => 'تحميل الفيديو بدون صوت';
 }

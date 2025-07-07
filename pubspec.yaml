@@ -29,6 +29,8 @@ dependencies:
   equatable: ^2.0.7
   dartz: ^0.10.1
   file_picker: ^10.2.0
+  lottie: ^3.3.1
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:
@@ -45,4 +47,4 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/
+    - assets/animations/

@@ -6,5 +6,8 @@
   "getInfo": "Get video info",
   "folderSelected": "Folder selected successfully",
   "noFolderSelected": "No folder selected",
-  "somethingWentWorng": "Something went wrong"
+  "somethingWentWorng": "Something went wrong",
+  "downloadAudio": "Download audio",
+  "downloadVideo": "Download video",
+  "downloadVideoWithoutAudio": "Download video without audio"
 }

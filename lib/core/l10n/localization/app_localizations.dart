@@ -142,6 +142,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Something went wrong'**
   String get somethingWentWorng;
+
+  /// No description provided for @downloadAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Download audio'**
+  String get downloadAudio;
+
+  /// No description provided for @downloadVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Download video'**
+  String get downloadVideo;
+
+  /// No description provided for @downloadVideoWithoutAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Download video without audio'**
+  String get downloadVideoWithoutAudio;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
