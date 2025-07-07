@@ -11,6 +11,7 @@ class FolderPathWidget extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Visibility(
           visible: context.select((HomeScreenViewModel vm) => vm.path != null),
@@ -20,6 +21,23 @@ class FolderPathWidget extends StatelessWidget {
             builder: (context, state) {
               return Text(
                 context.read<HomeScreenViewModel>().path!,
+                style: textTheme.bodySmall,
+                textAlign: TextAlign.start,
+              );
+            },
+          ),
+        ),
+
+        Visibility(
+          visible: context.select(
+            (HomeScreenViewModel vm) => vm.quality != null,
+          ),
+          child: BlocBuilder<HomeScreenViewModel, HomeScreenStates>(
+            buildWhen:
+                (previous, current) => current is UpdateQualityValueState,
+            builder: (context, state) {
+              return Text(
+                'Quality selected: ${context.read<HomeScreenViewModel>().quality!}',
                 style: textTheme.bodySmall,
                 textAlign: TextAlign.start,
               );

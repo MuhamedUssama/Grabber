@@ -51,9 +51,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i541.HomeRepository>(
       () => _i293.HomeRepositoryImpl(gh<_i68.HomeDataSource>()),
     );
-    gh.factory<_i1016.GetVideoInfoUsecase>(
-      () => _i1016.GetVideoInfoUsecase(gh<_i541.HomeRepository>()),
-    );
     gh.factory<_i898.DownloadAudioUsecase>(
       () => _i898.DownloadAudioUsecase(gh<_i541.HomeRepository>()),
     );
@@ -62,6 +59,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i117.DownloadVideoWithoutAudioUsecase>(
       () => _i117.DownloadVideoWithoutAudioUsecase(gh<_i541.HomeRepository>()),
+    );
+    gh.factory<_i1016.GetVideoInfoUsecase>(
+      () => _i1016.GetVideoInfoUsecase(gh<_i541.HomeRepository>()),
     );
     gh.factory<_i181.HomeScreenViewModel>(
       () => _i181.HomeScreenViewModel(

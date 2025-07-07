@@ -217,6 +217,11 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
     }
   }
 
+  void updateQualityValue(String updatedQuality) {
+    quality = updatedQuality;
+    emit(UpdateQualityValueState(updatedQuality));
+  }
+
   String? _urlValidator(String? value) {
     if (value == null || value.isEmpty) {
       return 'This field can not be empty';

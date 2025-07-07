@@ -14,7 +14,7 @@ class CustomVideoQualityButton extends StatelessWidget {
 
     return OutlinedButton(
       onPressed: () {
-        context.read<HomeScreenViewModel>().quality = quality;
+        context.read<HomeScreenViewModel>().updateQualityValue(quality);
       },
       child: Text(
         quality,

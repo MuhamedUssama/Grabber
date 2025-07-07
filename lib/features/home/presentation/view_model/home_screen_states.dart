@@ -80,3 +80,8 @@ final class GetDownloadsDirectoryFailureState extends HomeScreenStates {
   final String error;
   GetDownloadsDirectoryFailureState(this.error);
 }
+
+final class UpdateQualityValueState extends HomeScreenStates {
+  final String quality;
+  UpdateQualityValueState(this.quality);
+}
