@@ -175,6 +175,48 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
     }
   }
 
+  Future<void> downloadVideoWithoutAudio() async {
+    try {
+      final String? validationMessage = _urlValidator(controller.text);
+      if (validationMessage != null) {
+        emit(ValidateUrlState(validationMessage));
+        return;
+      }
+
+      log('Quality of video without audio is: $quality');
+
+      if (quality == null) {
+        emit(
+          DownloadVideoWithoutAudioFailureState(
+            'Choose the quality which you preffer first',
+          ),
+        );
+        return;
+      }
+
+      emit(DownloadVideoWithoutAudioLoadingState());
+
+      await _getDownloadDirectory();
+
+      final DownloadVideoRequestModel request = DownloadVideoRequestModel(
+        url: controller.text,
+        outputDir: path,
+        quality: quality,
+      );
+
+      final result = await _videoWithoutAudioUsecase(request);
+
+      result.fold(
+        (error) =>
+            emit(DownloadVideoWithoutAudioFailureState(error.toString())),
+        (videoResponse) =>
+            emit(DownloadVideoWithoutAudioSuccessState(videoResponse)),
+      );
+    } catch (error) {
+      emit(DownloadVideoWithoutAudioFailureState(error.toString()));
+    }
+  }
+
   String? _urlValidator(String? value) {
     if (value == null || value.isEmpty) {
       return 'This field can not be empty';

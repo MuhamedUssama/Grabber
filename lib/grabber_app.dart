@@ -21,6 +21,7 @@ class Grabber extends StatelessWidget {
       ],
       theme: AppTheme.darkTheme,
       supportedLocales: [Locale('en'), Locale('ar')],
+      locale: Locale('en'),
       routes: AppRouter.routes(),
       initialRoute: RoutesName.splashScreen,
     );

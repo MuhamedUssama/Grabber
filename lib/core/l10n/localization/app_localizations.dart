@@ -160,6 +160,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Download video without audio'**
   String get downloadVideoWithoutAudio;
+
+  /// No description provided for @appVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version 1.0.0 Developed by: Mohamed Osama © 2025 Mohamed Osama. All rights reserved.'**
+  String get appVersion;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -15,17 +15,24 @@ class DownloadBuilderWidget extends StatelessWidget {
           (previous, current) =>
               current is DownloadAudioLoadingState ||
               current is DownloadAudioSuccessState ||
+              current is DownloadAudioFailureState ||
               current is DownloadVideoLoadingState ||
-              current is DownloadVideoSuccessState,
+              current is DownloadVideoSuccessState ||
+              current is DownloadVideoFailureState ||
+              current is DownloadVideoWithoutAudioLoadingState ||
+              current is DownloadVideoWithoutAudioSuccessState ||
+              current is DownloadVideoWithoutAudioFailureState,
 
       builder: (context, state) {
         if (state is DownloadAudioLoadingState ||
-            state is DownloadVideoLoadingState) {
+            state is DownloadVideoLoadingState ||
+            state is DownloadVideoWithoutAudioLoadingState) {
           return Expanded(
             child: LottieBuilder.asset(AppAnimations.dynamicLoading),
           );
         } else if (state is DownloadAudioSuccessState ||
-            state is DownloadVideoSuccessState) {
+            state is DownloadVideoSuccessState ||
+            state is DownloadVideoWithoutAudioSuccessState) {
           return const Visibility(
             visible: false,
             child: SizedBox(height: 0, width: 0),

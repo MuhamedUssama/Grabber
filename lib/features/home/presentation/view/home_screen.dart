@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grabber/core/l10n/localization/app_localizations.dart';
-import 'package:grabber/core/theme/app_colors.dart';
-import 'package:grabber/core/utils/app_services.dart';
 import 'package:grabber/core/utils/snakbar_utils.dart';
-import 'package:grabber/core/widgets/custom_text_field.dart';
 import 'package:grabber/features/home/presentation/widgets/folder_path_widget.dart';
 
 import '../view_model/home_screen_states.dart';
 import '../view_model/home_screen_view_model.dart';
 import '../widgets/download_builder_widget.dart';
+import '../widgets/download_buttons_widget.dart';
 import '../widgets/resolution_section.dart';
+import '../widgets/url_and_browse_widget.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -67,6 +66,12 @@ class HomeScreen extends StatelessWidget {
             Icons.check_circle_outline_rounded,
             'Video downloaded successfully in ${context.read<HomeScreenViewModel>().path}',
           );
+        } else if (state is DownloadVideoWithoutAudioSuccessState) {
+          SnakBarUtils.showSnakbar(
+            context,
+            Icons.check_circle_outline_rounded,
+            'Video downloaded successfully in ${context.read<HomeScreenViewModel>().path}',
+          );
         } else if (state is GetDownloadsDirectoryFailureState) {
           SnakBarUtils.showSnakbar(context, Icons.error_rounded, state.error);
         }
@@ -76,78 +81,26 @@ class HomeScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Column(
             spacing: 24,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [Text(locale.appName, style: textTheme.displayLarge)],
-              ),
-              Row(
-                spacing: 16,
-                children: [
-                  Expanded(
-                    child: CustomTextField(
-                      hintText: locale.url,
-                      controller:
-                          context.read<HomeScreenViewModel>().controller,
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          AppServices.pasteFromClipboard(
-                            context: context,
-                            controller:
-                                context.read<HomeScreenViewModel>().controller,
-                          );
-                        },
-                        color: AppColors.darkTextColor,
-                        splashColor: AppColors.darkHeadTextColor,
-                        disabledColor: AppColors.darkHeadTextColor,
-                        splashRadius: 20,
-                        icon: const Icon(Icons.content_paste_rounded),
-                      ),
+              Expanded(
+                child: Column(
+                  spacing: 24,
+                  children: [
+                    Row(
+                      children: [
+                        Text(locale.appName, style: textTheme.displayLarge),
+                      ],
                     ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<HomeScreenViewModel>().pickFolderPath();
-                    },
-                    child: Text(locale.browse, style: textTheme.labelLarge),
-                  ),
-                ],
+                    const UrlAndBrowseWidget(),
+                    const FolderPathWidget(),
+                    DownloadButtonsWidget(),
+                    ResolutionSection(),
+                    const DownloadBuilderWidget(),
+                  ],
+                ),
               ),
-              const FolderPathWidget(),
-              Wrap(
-                spacing: 16,
-                runSpacing: 16,
-                alignment: WrapAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<HomeScreenViewModel>().getVideoInfo();
-                    },
-                    child: Text(locale.getInfo, style: textTheme.labelLarge),
-                  ),
-
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<HomeScreenViewModel>().downloadAudio();
-                    },
-                    child: Text(
-                      locale.downloadAudio,
-                      style: textTheme.labelLarge,
-                    ),
-                  ),
-
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<HomeScreenViewModel>().downloadVideo();
-                    },
-                    child: Text(
-                      locale.downloadVideo,
-                      style: textTheme.labelLarge,
-                    ),
-                  ),
-                ],
-              ),
-              ResolutionSection(),
-              const DownloadBuilderWidget(),
+              Text(locale.appVersion, style: textTheme.bodySmall),
             ],
           ),
         ),
