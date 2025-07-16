@@ -17,7 +17,8 @@ class ResolutionSection extends StatelessWidget {
           (previous, current) =>
               current is GetAvalibleResloutionsState ||
               current is GetVideoInfoLoadingState ||
-              current is GetVideoInfoEmptyState,
+              current is GetVideoInfoEmptyState ||
+              current is GetVideoInfoErrorState,
       builder: (context, state) {
         if (state is GetVideoInfoLoadingState) {
           return Expanded(

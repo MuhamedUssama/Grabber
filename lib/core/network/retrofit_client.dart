@@ -13,7 +13,6 @@ import 'package:retrofit/http.dart';
 part 'retrofit_client.g.dart';
 
 @singleton
-@injectable
 @RestApi(baseUrl: EndPoints.baseUrl)
 abstract class RetrofitClient {
   @factoryMethod
