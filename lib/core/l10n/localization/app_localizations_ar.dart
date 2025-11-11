@@ -42,5 +42,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get downloadVideoWithoutAudio => 'تحميل الفيديو بدون صوت';
 
   @override
-  String get appVersion => 'Version 1.0.0 Developed by: Mohamed Osama © 2025 Mohamed Osama. All rights reserved.';
+  String get appVersion =>
+      'Version 1.0.0 Developed by: Mohamed Osama © 2025 Mohamed Osama. All rights reserved.';
 }
