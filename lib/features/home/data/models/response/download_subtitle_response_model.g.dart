@@ -1,20 +1,20 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'download_video_response_model.dart';
+part of 'download_subtitle_response_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-DownloadVideoResponseModel _$DownloadVideoResponseModelFromJson(
+DownloadSubtitleResponseModel _$DownloadSubtitleResponseModelFromJson(
   Map<String, dynamic> json,
-) => DownloadVideoResponseModel(
+) => DownloadSubtitleResponseModel(
   data: Data.fromJson(json['data'] as Map<String, dynamic>),
   success: json['success'] as bool,
 );
 
-Map<String, dynamic> _$DownloadVideoResponseModelToJson(
-  DownloadVideoResponseModel instance,
+Map<String, dynamic> _$DownloadSubtitleResponseModelToJson(
+  DownloadSubtitleResponseModel instance,
 ) => <String, dynamic>{'data': instance.data, 'success': instance.success};
 
 Data _$DataFromJson(Map<String, dynamic> json) =>
