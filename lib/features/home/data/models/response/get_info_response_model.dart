@@ -23,7 +23,7 @@ class Data {
   @JsonKey(name: 'is_playlist')
   final bool isPlaylist;
   @JsonKey(name: 'playlist_title')
-  final String playlistTitle;
+  final String? playlistTitle;
 
   Data({
     required this.entries,
@@ -40,7 +40,7 @@ class Entries {
   @JsonKey(name: 'duration_text')
   final String durationText;
   @JsonKey(name: 'options')
-  final List<Options> options;
+  final List<Options>? options;
   @JsonKey(name: 'thumbnail')
   final String thumbnail;
   @JsonKey(name: 'title')

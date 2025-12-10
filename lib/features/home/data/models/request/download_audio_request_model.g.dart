@@ -10,8 +10,8 @@ DownloadAudioRequestModel _$DownloadAudioRequestModelFromJson(
   Map<String, dynamic> json,
 ) => DownloadAudioRequestModel(
   url: json['url'] as String,
-  outputDir: json['output_dir'] as String,
-  outputFormat: json['output_format'] as String,
+  outputDir: json['output_dir'] as String?,
+  outputFormat: json['output_format'] as String?,
 );
 
 Map<String, dynamic> _$DownloadAudioRequestModelToJson(

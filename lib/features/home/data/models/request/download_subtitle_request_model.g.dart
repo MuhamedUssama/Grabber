@@ -11,7 +11,7 @@ DownloadSubtitleRequestModel _$DownloadSubtitleRequestModelFromJson(
 ) => DownloadSubtitleRequestModel(
   url: json['url'] as String,
   lang: json['lang'] as String,
-  outputDir: json['output_dir'] as String,
+  outputDir: json['output_dir'] as String?,
 );
 
 Map<String, dynamic> _$DownloadSubtitleRequestModelToJson(

@@ -7,9 +7,9 @@ class DownloadAudioRequestModel {
   @JsonKey(name: 'url')
   final String url;
   @JsonKey(name: 'output_dir')
-  final String outputDir;
+  final String? outputDir;
   @JsonKey(name: 'output_format')
-  final String outputFormat;
+  final String? outputFormat;
 
   DownloadAudioRequestModel({
     required this.url,

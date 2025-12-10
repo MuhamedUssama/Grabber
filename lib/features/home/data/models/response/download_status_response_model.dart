@@ -5,7 +5,7 @@ part 'download_status_response_model.g.dart';
 @JsonSerializable()
 class DownloadStatusResponseModel {
   @JsonKey(name: 'data')
-  final Data data;
+  final Data? data;
   @JsonKey(name: 'error')
   final Error error;
   @JsonKey(name: 'success')
@@ -38,13 +38,13 @@ class Error {
 @JsonSerializable()
 class Data {
   @JsonKey(name: 'error')
-  final String error;
+  final String? error;
   @JsonKey(name: 'progress')
-  final double progress;
+  final double? progress;
   @JsonKey(name: 'result')
-  final String result;
+  final String? result;
   @JsonKey(name: 'status')
-  final String status;
+  final String? status;
 
   Data({
     required this.error,

@@ -9,7 +9,10 @@ part of 'download_status_response_model.dart';
 DownloadStatusResponseModel _$DownloadStatusResponseModelFromJson(
   Map<String, dynamic> json,
 ) => DownloadStatusResponseModel(
-  data: Data.fromJson(json['data'] as Map<String, dynamic>),
+  data:
+      json['data'] == null
+          ? null
+          : Data.fromJson(json['data'] as Map<String, dynamic>),
   error: Error.fromJson(json['error'] as Map<String, dynamic>),
   success: json['success'] as bool,
 );
@@ -31,10 +34,10 @@ Map<String, dynamic> _$ErrorToJson(Error instance) => <String, dynamic>{
 };
 
 Data _$DataFromJson(Map<String, dynamic> json) => Data(
-  error: json['error'] as String,
-  progress: (json['progress'] as num).toDouble(),
-  result: json['result'] as String,
-  status: json['status'] as String,
+  error: json['error'] as String?,
+  progress: (json['progress'] as num?)?.toDouble(),
+  result: json['result'] as String?,
+  status: json['status'] as String?,
 );
 
 Map<String, dynamic> _$DataToJson(Data instance) => <String, dynamic>{

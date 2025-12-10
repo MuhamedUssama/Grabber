@@ -11,9 +11,9 @@ DownloadVideoRequestModel _$DownloadVideoRequestModelFromJson(
 ) => DownloadVideoRequestModel(
   url: json['url'] as String,
   quality: json['quality'] as String,
-  outputDir: json['output_dir'] as String,
+  outputDir: json['output_dir'] as String?,
   withAudio: json['with_audio'] as bool,
-  outputFormat: json['output_format'] as String,
+  outputFormat: json['output_format'] as String?,
 );
 
 Map<String, dynamic> _$DownloadVideoRequestModelToJson(

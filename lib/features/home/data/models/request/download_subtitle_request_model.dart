@@ -9,7 +9,7 @@ class DownloadSubtitleRequestModel {
   @JsonKey(name: 'lang')
   final String lang;
   @JsonKey(name: 'output_dir')
-  final String outputDir;
+  final String? outputDir;
 
   DownloadSubtitleRequestModel({
     required this.url,
@@ -17,6 +17,7 @@ class DownloadSubtitleRequestModel {
     required this.outputDir,
   });
 
-  factory DownloadSubtitleRequestModel.fromJson(Map<String, dynamic> json) => _$DownloadSubtitleRequestModelFromJson(json);
+  factory DownloadSubtitleRequestModel.fromJson(Map<String, dynamic> json) =>
+      _$DownloadSubtitleRequestModelFromJson(json);
   Map<String, dynamic> toJson() => _$DownloadSubtitleRequestModelToJson(this);
 }

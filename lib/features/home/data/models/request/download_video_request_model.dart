@@ -9,11 +9,11 @@ class DownloadVideoRequestModel {
   @JsonKey(name: 'quality')
   final String quality;
   @JsonKey(name: 'output_dir')
-  final String outputDir;
+  final String? outputDir;
   @JsonKey(name: 'with_audio')
   final bool withAudio;
   @JsonKey(name: 'output_format')
-  final String outputFormat;
+  final String? outputFormat;
 
   DownloadVideoRequestModel({
     required this.url,

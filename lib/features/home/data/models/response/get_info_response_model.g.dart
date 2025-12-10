@@ -23,7 +23,7 @@ Data _$DataFromJson(Map<String, dynamic> json) => Data(
           .map((e) => Entries.fromJson(e as Map<String, dynamic>))
           .toList(),
   isPlaylist: json['is_playlist'] as bool,
-  playlistTitle: json['playlist_title'] as String,
+  playlistTitle: json['playlist_title'] as String?,
 );
 
 Map<String, dynamic> _$DataToJson(Data instance) => <String, dynamic>{
@@ -35,8 +35,8 @@ Map<String, dynamic> _$DataToJson(Data instance) => <String, dynamic>{
 Entries _$EntriesFromJson(Map<String, dynamic> json) => Entries(
   durationText: json['duration_text'] as String,
   options:
-      (json['options'] as List<dynamic>)
-          .map((e) => Options.fromJson(e as Map<String, dynamic>))
+      (json['options'] as List<dynamic>?)
+          ?.map((e) => Options.fromJson(e as Map<String, dynamic>))
           .toList(),
   thumbnail: json['thumbnail'] as String,
   title: json['title'] as String,
