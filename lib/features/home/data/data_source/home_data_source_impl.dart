@@ -6,11 +6,14 @@ import 'package:grabber/core/network/exceptions.dart';
 import 'package:grabber/core/network/retrofit_client.dart';
 import 'package:grabber/features/home/data/data_source/home_data_source.dart';
 import 'package:grabber/features/home/data/models/request/download_audio_request_model.dart';
+import 'package:grabber/features/home/data/models/request/download_subtitle_request_model.dart';
 import 'package:grabber/features/home/data/models/request/download_video_request_model.dart';
 import 'package:grabber/features/home/data/models/request/get_video_info_request.dart';
 import 'package:grabber/features/home/data/models/response/download_audio_response_model.dart';
+import 'package:grabber/features/home/data/models/response/download_status_response_model.dart';
+import 'package:grabber/features/home/data/models/response/download_subtitle_response_model.dart';
 import 'package:grabber/features/home/data/models/response/download_video_response_model.dart';
-import 'package:grabber/features/home/data/models/response/get_video_info_model.dart';
+import 'package:grabber/features/home/data/models/response/get_info_response_model.dart';
 import 'package:injectable/injectable.dart';
 
 @Injectable(as: HomeDataSource)
@@ -20,23 +23,14 @@ class HomeDataSourceImpl implements HomeDataSource {
   HomeDataSourceImpl(this._retrofitClient);
 
   @override
-  Future<Either<ServerException, GetVideoInfoModel>> getVideoInfo(
-    GetVideoInfoRequest url,
+  Future<Either<ServerException, GetInfoResponseModel>> getVideoInfo(
+    GetVideoInfoRequest request,
   ) async {
     try {
-      GetVideoInfoModel response = await _retrofitClient.getVideoInfo(url);
+      final response = await _retrofitClient.getInfo(request);
       return Right(response);
     } on DioException catch (exception) {
-      if (exception.type == DioExceptionType.connectionTimeout ||
-          exception.type == DioExceptionType.receiveTimeout ||
-          exception.type == DioExceptionType.sendTimeout) {
-        return const Left(NoInternetConnectionException());
-      } else if (exception.response != null) {
-        return Left(_handleStatusCode(exception.response!.statusCode));
-      } else {
-        log('exception: $exception');
-        return const Left(FetchDataException());
-      }
+      return Left(_handleException(exception));
     }
   }
 
@@ -45,21 +39,10 @@ class HomeDataSourceImpl implements HomeDataSource {
     DownloadAudioRequestModel request,
   ) async {
     try {
-      DownloadAudioResponseModel response = await _retrofitClient.downloadAudio(
-        request,
-      );
+      final response = await _retrofitClient.downloadAudio(request);
       return Right(response);
     } on DioException catch (exception) {
-      if (exception.type == DioExceptionType.connectionTimeout ||
-          exception.type == DioExceptionType.receiveTimeout ||
-          exception.type == DioExceptionType.sendTimeout) {
-        return const Left(NoInternetConnectionException());
-      } else if (exception.response != null) {
-        return Left(_handleStatusCode(exception.response!.statusCode));
-      } else {
-        log('exception: $exception');
-        return const Left(FetchDataException());
-      }
+      return Left(_handleException(exception));
     }
   }
 
@@ -68,42 +51,56 @@ class HomeDataSourceImpl implements HomeDataSource {
     DownloadVideoRequestModel request,
   ) async {
     try {
-      DownloadVideoResponseModel response = await _retrofitClient.downloadVideo(
-        request,
-      );
+      final response = await _retrofitClient.downloadVideo(request);
       return Right(response);
     } on DioException catch (exception) {
-      if (exception.type == DioExceptionType.connectionTimeout ||
-          exception.type == DioExceptionType.receiveTimeout ||
-          exception.type == DioExceptionType.sendTimeout) {
-        return const Left(NoInternetConnectionException());
-      } else if (exception.response != null) {
-        return Left(_handleStatusCode(exception.response!.statusCode));
-      } else {
-        log('exception: $exception');
-        return const Left(FetchDataException());
-      }
+      return Left(_handleException(exception));
     }
   }
 
   @override
-  Future<Either<ServerException, DownloadVideoResponseModel>>
-  downloadVideoWithoutAudio(DownloadVideoRequestModel request) async {
+  Future<Either<ServerException, DownloadSubtitleResponseModel>>
+  downloadSubtitle(DownloadSubtitleRequestModel request) async {
     try {
-      DownloadVideoResponseModel response = await _retrofitClient
-          .downloadVideoWithoutAudio(request);
+      final response = await _retrofitClient.downloadSubtitle(request);
       return Right(response);
     } on DioException catch (exception) {
-      if (exception.type == DioExceptionType.connectionTimeout ||
-          exception.type == DioExceptionType.receiveTimeout ||
-          exception.type == DioExceptionType.sendTimeout) {
-        return const Left(NoInternetConnectionException());
-      } else if (exception.response != null) {
-        return Left(_handleStatusCode(exception.response!.statusCode));
-      } else {
-        log('exception: $exception');
-        return const Left(FetchDataException());
-      }
+      return Left(_handleException(exception));
+    }
+  }
+
+  @override
+  Future<Either<ServerException, DownloadStatusResponseModel>> getTaskStatus(
+    String taskId,
+  ) async {
+    try {
+      final response = await _retrofitClient.getTaskStatus(taskId);
+      return Right(response);
+    } on DioException catch (exception) {
+      return Left(_handleException(exception));
+    }
+  }
+
+  @override
+  Future<Either<ServerException, void>> cancelTask(String taskId) async {
+    try {
+      await _retrofitClient.cancelTask(taskId);
+      return const Right(null);
+    } on DioException catch (exception) {
+      return Left(_handleException(exception));
+    }
+  }
+
+  ServerException _handleException(DioException exception) {
+    if (exception.type == DioExceptionType.connectionTimeout ||
+        exception.type == DioExceptionType.receiveTimeout ||
+        exception.type == DioExceptionType.sendTimeout) {
+      return const NoInternetConnectionException();
+    } else if (exception.response != null) {
+      return _handleStatusCode(exception.response!.statusCode);
+    } else {
+      log('exception: $exception');
+      return const FetchDataException();
     }
   }
 
