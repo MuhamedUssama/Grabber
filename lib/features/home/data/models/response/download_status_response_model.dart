@@ -7,13 +7,13 @@ class DownloadStatusResponseModel {
   @JsonKey(name: 'data')
   final Data? data;
   @JsonKey(name: 'error')
-  final Error error;
+  final Error? error;
   @JsonKey(name: 'success')
   final bool success;
 
   DownloadStatusResponseModel({
     required this.data,
-    required this.error,
+    this.error,
     required this.success,
   });
 

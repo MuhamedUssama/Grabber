@@ -31,41 +31,19 @@ class HomeScreen extends StatelessWidget {
             Icons.error_rounded,
             state.message ?? locale.noFolderSelected,
           );
-        } else if (state is DownloadAudioFailureState) {
-          SnakBarUtils.showSnakbar(
-            context,
-            Icons.error_rounded,
-            state.error ?? locale.somethingWentWorng,
-          );
-        } else if (state is DownloadVideoFailureState) {
-          SnakBarUtils.showSnakbar(
-            context,
-            Icons.error_rounded,
-            state.error ?? locale.somethingWentWorng,
-          );
-        } else if (state is DownloadVideoWithoutAudioFailureState) {
-          SnakBarUtils.showSnakbar(
-            context,
-            Icons.error_rounded,
-            state.error ?? locale.somethingWentWorng,
-          );
-        } else if (state is DownloadAudioSuccessState) {
+        } else if (state is DownloadFailureState) {
+          SnakBarUtils.showSnakbar(context, Icons.error_rounded, state.error);
+        } else if (state is DownloadCompletedState) {
           SnakBarUtils.showSnakbar(
             context,
             Icons.check_circle_outline_rounded,
-            'Audio downloaded successfully in ${context.read<HomeScreenViewModel>().path}',
+            'Download Completed: ${state.filePath}',
           );
-        } else if (state is DownloadVideoSuccessState) {
+        } else if (state is DownloadCancelledState) {
           SnakBarUtils.showSnakbar(
             context,
-            Icons.check_circle_outline_rounded,
-            'Video downloaded successfully in ${context.read<HomeScreenViewModel>().path}',
-          );
-        } else if (state is DownloadVideoWithoutAudioSuccessState) {
-          SnakBarUtils.showSnakbar(
-            context,
-            Icons.check_circle_outline_rounded,
-            'Video downloaded successfully in ${context.read<HomeScreenViewModel>().path}',
+            Icons.info_outline_rounded,
+            locale.cancel,
           );
         } else if (state is GetDownloadsDirectoryFailureState) {
           SnakBarUtils.showSnakbar(context, Icons.error_rounded, state.error);

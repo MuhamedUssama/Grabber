@@ -54,23 +54,23 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i541.HomeRepository>(
       () => _i293.HomeRepositoryImpl(gh<_i68.HomeDataSource>()),
     );
-    gh.factory<_i898.DownloadAudioUsecase>(
-      () => _i898.DownloadAudioUsecase(gh<_i541.HomeRepository>()),
-    );
-    gh.factory<_i513.DownloadVideoUsecase>(
-      () => _i513.DownloadVideoUsecase(gh<_i541.HomeRepository>()),
-    );
-    gh.factory<_i1016.GetVideoInfoUsecase>(
-      () => _i1016.GetVideoInfoUsecase(gh<_i541.HomeRepository>()),
-    );
     gh.factory<_i782.CancelTaskUseCase>(
       () => _i782.CancelTaskUseCase(gh<_i541.HomeRepository>()),
+    );
+    gh.factory<_i898.DownloadAudioUsecase>(
+      () => _i898.DownloadAudioUsecase(gh<_i541.HomeRepository>()),
     );
     gh.factory<_i398.DownloadSubtitleUsecase>(
       () => _i398.DownloadSubtitleUsecase(gh<_i541.HomeRepository>()),
     );
+    gh.factory<_i513.DownloadVideoUsecase>(
+      () => _i513.DownloadVideoUsecase(gh<_i541.HomeRepository>()),
+    );
     gh.factory<_i497.GetTaskStatusUseCase>(
       () => _i497.GetTaskStatusUseCase(gh<_i541.HomeRepository>()),
+    );
+    gh.factory<_i1016.GetVideoInfoUsecase>(
+      () => _i1016.GetVideoInfoUsecase(gh<_i541.HomeRepository>()),
     );
     gh.factory<_i181.HomeScreenViewModel>(
       () => _i181.HomeScreenViewModel(

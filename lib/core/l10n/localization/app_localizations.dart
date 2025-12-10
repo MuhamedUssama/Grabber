@@ -169,6 +169,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Version 1.0.0 Developed by: Mohamed Osama © 2025 Mohamed Osama. All rights reserved.'**
   String get appVersion;
+
+  /// No description provided for @urlHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Put url here'**
+  String get urlHint;
+
+  /// No description provided for @startDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Download'**
+  String get startDownload;
+
+  /// No description provided for @selectFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Save Folder'**
+  String get selectFolder;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @quality.
+  ///
+  /// In en, this message translates to:
+  /// **'Quality'**
+  String get quality;
+
+  /// No description provided for @format.
+  ///
+  /// In en, this message translates to:
+  /// **'Format'**
+  String get format;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @videoWithAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Video w/ Audio'**
+  String get videoWithAudio;
+
+  /// No description provided for @audioOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio Only'**
+  String get audioOnly;
+
+  /// No description provided for @original.
+  ///
+  /// In en, this message translates to:
+  /// **'Original'**
+  String get original;
+
+  /// No description provided for @unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get unknown;
 }
 
 class _AppLocalizationsDelegate

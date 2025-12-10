@@ -13,7 +13,10 @@ DownloadStatusResponseModel _$DownloadStatusResponseModelFromJson(
       json['data'] == null
           ? null
           : Data.fromJson(json['data'] as Map<String, dynamic>),
-  error: Error.fromJson(json['error'] as Map<String, dynamic>),
+  error:
+      json['error'] == null
+          ? null
+          : Error.fromJson(json['error'] as Map<String, dynamic>),
   success: json['success'] as bool,
 );
 

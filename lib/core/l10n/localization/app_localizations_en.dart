@@ -44,4 +44,37 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get appVersion =>
       'Version 1.0.0 Developed by: Mohamed Osama © 2025 Mohamed Osama. All rights reserved.';
+
+  @override
+  String get urlHint => 'Put url here';
+
+  @override
+  String get startDownload => 'Start Download';
+
+  @override
+  String get selectFolder => 'Select Save Folder';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get quality => 'Quality';
+
+  @override
+  String get format => 'Format';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get videoWithAudio => 'Video w/ Audio';
+
+  @override
+  String get audioOnly => 'Audio Only';
+
+  @override
+  String get original => 'Original';
+
+  @override
+  String get unknown => 'Unknown';
 }

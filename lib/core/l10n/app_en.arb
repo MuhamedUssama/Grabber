@@ -10,5 +10,16 @@
   "downloadAudio": "Download audio",
   "downloadVideo": "Download video",
   "downloadVideoWithoutAudio": "Download video without audio",
-  "appVersion": "Version 1.0.0 Developed by: Mohamed Osama © 2025 Mohamed Osama. All rights reserved."
+  "appVersion": "Version 1.0.0 Developed by: Mohamed Osama © 2025 Mohamed Osama. All rights reserved.",
+  "urlHint": "Put url here",
+  "startDownload": "Start Download",
+  "selectFolder": "Select Save Folder",
+  "cancel": "Cancel",
+  "quality": "Quality",
+  "format": "Format",
+  "language": "Language",
+  "videoWithAudio": "Video w/ Audio",
+  "audioOnly": "Audio Only",
+  "original": "Original",
+  "unknown": "Unknown"
 }
