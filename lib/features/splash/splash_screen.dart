@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:grabber/core/l10n/localization/app_localizations.dart';
 import 'package:grabber/core/routes/routes_name.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -8,20 +9,56 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
   @override
   void initState() {
-    Future.delayed(Duration(seconds: 3), () {
+    super.initState();
+
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    );
+
+    _scaleAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutBack,
+    );
+
+    _controller.forward();
+
+    Future.delayed(const Duration(seconds: 3), () {
       // ignore: use_build_context_synchronously
       Navigator.pushReplacementNamed(context, RoutesName.homeScreen);
     });
-    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: Icon(Icons.sunny, color: Colors.white, size: 64)),
+    return Scaffold(
+      body: Center(
+        child: FadeTransition(
+          opacity: _scaleAnimation,
+          child: ScaleTransition(
+            scale: _scaleAnimation,
+            child: Text(
+              AppLocalizations.of(context)!.appName,
+              style: Theme.of(
+                context,
+              ).textTheme.displayLarge?.copyWith(fontSize: 80),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

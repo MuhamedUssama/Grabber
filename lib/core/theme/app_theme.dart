@@ -8,7 +8,7 @@ abstract class AppTheme {
     primaryColor: AppColors.darkTextColor,
 
     textTheme: TextTheme(
-      displayLarge: GoogleFonts.righteous(
+      displayLarge: GoogleFonts.risque(
         color: AppColors.darkTextColor,
         fontSize: 56,
         fontWeight: FontWeight.bold,
