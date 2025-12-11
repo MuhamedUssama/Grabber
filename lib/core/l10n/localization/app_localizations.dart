@@ -247,6 +247,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save Directory'**
   String get pickFolder;
+
+  /// No description provided for @somethingWentWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'OPPs! Something went wrong, please try again later'**
+  String get somethingWentWrong;
 }
 
 class _AppLocalizationsDelegate

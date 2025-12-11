@@ -58,17 +58,81 @@ class VideoListItem extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Row(
+                    if (entry.channelName != null) ...[
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.person_rounded,
+                            size: 14,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              entry.channelName!,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                    ],
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 4,
                       children: [
-                        Icon(
-                          Icons.access_time_rounded,
-                          size: 14,
-                          color: Theme.of(context).textTheme.bodySmall?.color,
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.remove_red_eye_rounded,
+                              size: 14,
+                              color:
+                                  Theme.of(context).textTheme.bodySmall?.color,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              entry.viewsText,
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 4),
-                        Text(
-                          entry.durationText,
-                          style: Theme.of(context).textTheme.bodySmall,
+                        if (entry.dateText.isNotEmpty)
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.calendar_today_rounded,
+                                size: 14,
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).textTheme.bodySmall?.color,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                entry.dateText,
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.access_time_rounded,
+                              size: 14,
+                              color:
+                                  Theme.of(context).textTheme.bodySmall?.color,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              entry.durationText,
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ],
                         ),
                       ],
                     ),

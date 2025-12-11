@@ -37,6 +37,12 @@ class Data {
 
 @JsonSerializable()
 class Entries {
+  @JsonKey(name: 'channel_name')
+  final String? channelName;
+  @JsonKey(name: 'channel_url')
+  final String channelUrl;
+  @JsonKey(name: 'date_text')
+  final String dateText;
   @JsonKey(name: 'duration_text')
   final String durationText;
   @JsonKey(name: 'options')
@@ -47,13 +53,19 @@ class Entries {
   final String title;
   @JsonKey(name: 'url')
   final String url;
+  @JsonKey(name: 'views_text')
+  final String viewsText;
 
   Entries({
+    required this.channelName,
+    required this.channelUrl,
+    required this.dateText,
     required this.durationText,
     required this.options,
     required this.thumbnail,
     required this.title,
     required this.url,
+    required this.viewsText,
   });
 
   factory Entries.fromJson(Map<String, dynamic> json) =>

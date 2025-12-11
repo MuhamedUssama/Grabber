@@ -23,5 +23,7 @@
   "original": "Original",
   "unknown": "Unknown",
   "noContentLoaded": "No content loaded",
-  "pickFolder": "Save Directory"
+  "pickFolder": "Save Directory",
+  "somethingWentWrong": "OPPs! Something went wrong, please try again later"
+
 }

@@ -83,4 +83,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get pickFolder => 'اختر مجلد الحفظ';
+
+  @override
+  String get somethingWentWrong => 'حدث خطأ ما، الرجاء المحاولة مرة أخرى';
 }

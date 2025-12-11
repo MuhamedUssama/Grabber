@@ -62,7 +62,6 @@ class VideoInfoCard extends StatelessWidget {
       );
     }
 
-    // Single Video Layout
     final title =
         info.data.entries.isNotEmpty
             ? info.data.entries.first.title
@@ -129,20 +128,74 @@ class VideoInfoCard extends StatelessWidget {
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            Row(
-              children: [
-                Icon(
-                  Icons.access_time_rounded,
-                  size: 16,
-                  color: Theme.of(context).textTheme.bodySmall?.color,
-                ),
-                const SizedBox(width: 4),
-                Text(duration, style: Theme.of(context).textTheme.bodyMedium),
-              ],
-            ),
+            if (info.data.entries.isNotEmpty &&
+                info.data.entries.first.channelName != null) ...[
+              Row(
+                children: [
+                  Icon(
+                    Icons.person_rounded,
+                    size: 18,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    info.data.entries.first.channelName!,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+            ],
+            if (info.data.entries.isNotEmpty)
+              Row(
+                children: [
+                  if (info.data.entries.first.viewsText.isNotEmpty) ...[
+                    _buildStatItem(
+                      context,
+                      Icons.remove_red_eye_rounded,
+                      info.data.entries.first.viewsText,
+                    ),
+                    _buildDot(context),
+                  ],
+                  if (info.data.entries.first.dateText.isNotEmpty) ...[
+                    _buildStatItem(
+                      context,
+                      Icons.calendar_today_rounded,
+                      info.data.entries.first.dateText,
+                    ),
+                    _buildDot(context),
+                  ],
+                  _buildStatItem(context, Icons.access_time_rounded, duration),
+                ],
+              ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildStatItem(BuildContext context, IconData icon, String text) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          icon,
+          size: 14,
+          color: Theme.of(context).textTheme.bodySmall?.color,
+        ),
+        const SizedBox(width: 4),
+        Text(text, style: Theme.of(context).textTheme.bodySmall),
+      ],
+    );
+  }
+
+  Widget _buildDot(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Text('•', style: Theme.of(context).textTheme.bodySmall),
     );
   }
 }

@@ -33,22 +33,30 @@ Map<String, dynamic> _$DataToJson(Data instance) => <String, dynamic>{
 };
 
 Entries _$EntriesFromJson(Map<String, dynamic> json) => Entries(
+  channelName: json['channel_name'] as String?,
+  channelUrl: json['channel_url'] as String,
+  dateText: json['date_text'] as String,
   durationText: json['duration_text'] as String,
   options:
-      (json['options'] as List<dynamic>?)
-          ?.map((e) => Options.fromJson(e as Map<String, dynamic>))
+      (json['options'] as List<dynamic>)
+          .map((e) => Options.fromJson(e as Map<String, dynamic>))
           .toList(),
   thumbnail: json['thumbnail'] as String,
   title: json['title'] as String,
   url: json['url'] as String,
+  viewsText: json['views_text'] as String,
 );
 
 Map<String, dynamic> _$EntriesToJson(Entries instance) => <String, dynamic>{
+  'channel_name': instance.channelName,
+  'channel_url': instance.channelUrl,
+  'date_text': instance.dateText,
   'duration_text': instance.durationText,
   'options': instance.options,
   'thumbnail': instance.thumbnail,
   'title': instance.title,
   'url': instance.url,
+  'views_text': instance.viewsText,
 };
 
 Options _$OptionsFromJson(Map<String, dynamic> json) => Options(

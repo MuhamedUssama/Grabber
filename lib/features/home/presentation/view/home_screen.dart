@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grabber/core/l10n/localization/app_localizations.dart';
@@ -18,7 +20,12 @@ class HomeScreen extends StatelessWidget {
         if (state is ValidateUrlState) {
           SnakBarUtils.showSnakbar(context, Icons.error_rounded, state.message);
         } else if (state is GetVideoInfoErrorState) {
-          SnakBarUtils.showSnakbar(context, Icons.error, state.error);
+          log(state.error);
+          SnakBarUtils.showSnakbar(
+            context,
+            Icons.error,
+            locale.somethingWentWrong,
+          );
         } else if (state is SelectFolderPathSuccessState) {
           SnakBarUtils.showSnakbar(
             context,
@@ -26,13 +33,19 @@ class HomeScreen extends StatelessWidget {
             locale.folderSelected,
           );
         } else if (state is SelectFolderPathFailureState) {
+          log(state.message ?? "SelectFolderPathFailureState");
           SnakBarUtils.showSnakbar(
             context,
             Icons.error_rounded,
-            state.message ?? locale.noFolderSelected,
+            locale.noFolderSelected,
           );
         } else if (state is DownloadFailureState) {
-          SnakBarUtils.showSnakbar(context, Icons.error_rounded, state.error);
+          log(state.error);
+          SnakBarUtils.showSnakbar(
+            context,
+            Icons.error_rounded,
+            locale.somethingWentWrong,
+          );
         } else if (state is DownloadCompletedState) {
           SnakBarUtils.showSnakbar(
             context,
@@ -46,7 +59,12 @@ class HomeScreen extends StatelessWidget {
             locale.cancel,
           );
         } else if (state is GetDownloadsDirectoryFailureState) {
-          SnakBarUtils.showSnakbar(context, Icons.error_rounded, state.error);
+          log(state.error);
+          SnakBarUtils.showSnakbar(
+            context,
+            Icons.error_rounded,
+            locale.somethingWentWrong,
+          );
         }
       },
       child: const HomeScreenScaffold(),

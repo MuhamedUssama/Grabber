@@ -23,5 +23,6 @@
   "original": "أصلي",
   "unknown": "غير معروف",
   "noContentLoaded": "لا يوجد محتوى",
-  "pickFolder": "اختر مجلد الحفظ"
+  "pickFolder": "اختر مجلد الحفظ",
+  "somethingWentWrong": "حدث خطأ ما، الرجاء المحاولة مرة أخرى"
 }

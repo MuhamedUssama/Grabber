@@ -83,4 +83,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pickFolder => 'Save Directory';
+
+  @override
+  String get somethingWentWrong =>
+      'OPPs! Something went wrong, please try again later';
 }
