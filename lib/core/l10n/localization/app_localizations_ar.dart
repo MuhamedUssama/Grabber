@@ -77,4 +77,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get unknown => 'غير معروف';
+
+  @override
+  String get noContentLoaded => 'لا يوجد محتوى';
 }

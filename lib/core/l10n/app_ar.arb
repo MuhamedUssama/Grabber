@@ -21,5 +21,6 @@
   "videoWithAudio": "فيديو مع صوت",
   "audioOnly": "صوت فقط",
   "original": "أصلي",
-  "unknown": "غير معروف"
+  "unknown": "غير معروف",
+  "noContentLoaded": "لا يوجد محتوى"
 }

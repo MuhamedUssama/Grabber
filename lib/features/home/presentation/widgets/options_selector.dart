@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:grabber/core/theme/app_colors.dart';
 import 'package:grabber/features/home/presentation/view_model/home_screen_states.dart';
 import 'package:grabber/features/home/presentation/view_model/home_screen_view_model.dart';
 
@@ -28,9 +29,6 @@ class _OptionsSelectorState extends State<OptionsSelector> {
       builder: (context, state) {
         final cubit = context.read<HomeScreenViewModel>();
 
-        // Re-trigger callbacks to ensure parent has default values
-        // Note: Ideally do this in logic, but for UI sync this is quick refactor
-
         List<String> resolutions = [
           "144p",
           "240p",
@@ -46,7 +44,6 @@ class _OptionsSelectorState extends State<OptionsSelector> {
           if (!resolutions.contains(_selectedQuality) &&
               resolutions.isNotEmpty) {
             _selectedQuality = resolutions.first;
-            // Notify parent of auto-selection
             Future.microtask(
               () => widget.onOptionChanged(
                 _selectedType,
@@ -60,15 +57,11 @@ class _OptionsSelectorState extends State<OptionsSelector> {
 
         return Column(
           children: [
-            // Type Selector
             Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
-                ),
+                border: Border.all(color: Theme.of(context).dividerColor),
               ),
               child: Row(
                 children: [
@@ -95,10 +88,8 @@ class _OptionsSelectorState extends State<OptionsSelector> {
             ),
             const SizedBox(height: 16),
 
-            // Contextual Options
             if (_selectedType == DownloadType.video) ...[
               _buildDropdown(
-                context,
                 label: "Quality",
                 value: _selectedQuality,
                 items: resolutions,
@@ -115,10 +106,9 @@ class _OptionsSelectorState extends State<OptionsSelector> {
               ),
               const SizedBox(height: 12),
               _buildDropdown(
-                context,
                 label: "Format",
                 value: _selectedFormat,
-                items: const ['mp4', 'original'],
+                items: const ['mp4', 'webm', 'mkv', 'avi', 'mov', 'flv', 'wmv'],
                 onChanged: (val) {
                   setState(() => _selectedFormat = val!);
                   widget.onOptionChanged(
@@ -133,10 +123,17 @@ class _OptionsSelectorState extends State<OptionsSelector> {
 
             if (_selectedType == DownloadType.audio) ...[
               _buildDropdown(
-                context,
                 label: "Format",
                 value: 'mp3',
-                items: const ['mp3', 'm4a', 'original'],
+                items: const [
+                  'mp3',
+                  'm4a',
+                  'webm',
+                  'flac',
+                  'wav',
+                  'ogg',
+                  'aac',
+                ],
                 onChanged: (val) {
                   setState(() => _selectedFormat = val!);
                   widget.onOptionChanged(
@@ -151,7 +148,6 @@ class _OptionsSelectorState extends State<OptionsSelector> {
 
             if (_selectedType == DownloadType.subtitle) ...[
               _buildDropdown(
-                context,
                 label: "Languages",
                 value: 'en,ar',
                 items: const ['en,ar', 'en', 'ar'],
@@ -179,14 +175,12 @@ class _OptionsSelectorState extends State<OptionsSelector> {
     IconData icon,
   ) {
     final isSelected = _selectedType == type;
-    final theme = Theme.of(context);
 
     return Expanded(
       child: GestureDetector(
         onTap: () {
           setState(() {
             _selectedType = type;
-            // Notify parent immediately
             widget.onOptionChanged(
               _selectedType,
               _selectedQuality,
@@ -199,10 +193,7 @@ class _OptionsSelectorState extends State<OptionsSelector> {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color:
-                isSelected
-                    ? theme.primaryColor.withValues(alpha: 0.1)
-                    : Colors.transparent,
+            color: isSelected ? AppColors.darkTextColor : AppColors.transparent,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Column(
@@ -210,10 +201,7 @@ class _OptionsSelectorState extends State<OptionsSelector> {
               Icon(
                 icon,
                 size: 20,
-                color:
-                    isSelected
-                        ? theme.primaryColor
-                        : theme.iconTheme.color?.withValues(alpha: 0.5),
+                color: isSelected ? AppColors.dark : AppColors.darkTextColor,
               ),
               const SizedBox(height: 4),
               Text(
@@ -221,10 +209,7 @@ class _OptionsSelectorState extends State<OptionsSelector> {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                  color:
-                      isSelected
-                          ? theme.primaryColor
-                          : theme.textTheme.bodySmall?.color,
+                  color: isSelected ? AppColors.dark : AppColors.darkTextColor,
                 ),
               ),
             ],
@@ -234,28 +219,26 @@ class _OptionsSelectorState extends State<OptionsSelector> {
     );
   }
 
-  Widget _buildDropdown(
-    BuildContext context, {
+  Widget _buildDropdown({
     required String label,
     required String? value,
     required List<String> items,
     required Function(String?) onChanged,
   }) {
-    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
-        color: theme.inputDecorationTheme.fillColor,
-        border: Border.all(color: theme.dividerColor),
+        color: AppColors.dark,
+        border: Border.all(color: AppColors.darkWithOpacity),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
           Text(
             "$label:",
-            style: theme.textTheme.bodyMedium?.copyWith(
+            style: TextStyle(
               fontWeight: FontWeight.w500,
-              color: theme.hintColor,
+              color: AppColors.darkTextColor,
             ),
           ),
           const SizedBox(width: 12),
@@ -265,14 +248,14 @@ class _OptionsSelectorState extends State<OptionsSelector> {
                 value: (items.contains(value)) ? value : null,
                 hint: Text(
                   "Select",
-                  style: theme.inputDecorationTheme.hintStyle,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontSize: 14),
                 ),
                 isExpanded: true,
-                dropdownColor: theme.cardColor,
-                iconEnabledColor: theme.iconTheme.color,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                dropdownColor: AppColors.dark,
+                iconEnabledColor: AppColors.darkWithOpacity,
+                style: TextStyle(fontWeight: FontWeight.bold),
                 items:
                     items
                         .map((e) => DropdownMenuItem(value: e, child: Text(e)))

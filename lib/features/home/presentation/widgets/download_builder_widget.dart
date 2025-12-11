@@ -21,7 +21,10 @@ class DownloadBuilderWidget extends StatelessWidget {
       builder: (context, state) {
         if (state is DownloadRequestLoadingState) {
           return Center(
-            child: LottieBuilder.asset(AppAnimations.dynamicLoading),
+            child: SizedBox(
+              height: 200,
+              child: LottieBuilder.asset(AppAnimations.dynamicLoading),
+            ),
           );
         }
         return const SizedBox.shrink();

@@ -19,6 +19,9 @@ class DownloadButtonsWidget extends StatelessWidget {
             onPressed: onDownloadPressed,
             icon: const Icon(Icons.download_rounded),
             label: Text(locale.startDownload, style: textTheme.labelLarge),
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size.fromHeight(64),
+            ),
           ),
         ),
       ],

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:grabber/core/l10n/localization/app_localizations.dart';
+import 'package:grabber/core/theme/app_colors.dart';
 import 'package:grabber/features/home/presentation/view_model/home_screen_view_model.dart';
 
 class DownloadProgressSection extends StatelessWidget {
@@ -14,6 +16,7 @@ class DownloadProgressSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -33,7 +36,7 @@ class DownloadProgressSection extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).primaryColor,
+                  color: AppColors.darkTextColor,
                   letterSpacing: 1.0,
                 ),
               ),
@@ -46,6 +49,8 @@ class DownloadProgressSection extends StatelessWidget {
           const SizedBox(height: 12),
           LinearProgressIndicator(
             value: progress > 0 ? progress : null,
+            backgroundColor: AppColors.darkWithOpacity,
+            color: AppColors.darkTextColor,
             borderRadius: BorderRadius.circular(8),
             minHeight: 8,
           ),
@@ -57,14 +62,15 @@ class DownloadProgressSection extends StatelessWidget {
                 context.read<HomeScreenViewModel>().cancelCurrentDownload();
               },
               icon: const Icon(Icons.close_rounded, size: 18),
-              label: const Text("Cancel Download"),
+              label: Text(locale.cancel),
               style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.red,
-                side: const BorderSide(color: Colors.red),
+                foregroundColor: AppColors.error,
+                side: const BorderSide(color: AppColors.error),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 12),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                minimumSize: const Size.fromHeight(56),
               ),
             ),
           ),

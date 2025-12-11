@@ -76,66 +76,72 @@ class VideoInfoCard extends StatelessWidget {
             ? info.data.entries.first.durationText
             : "";
 
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.darkWithOpacity),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.network(
-              thumbnail,
-              width: double.infinity,
-              height: 200,
-              fit: BoxFit.cover,
-              errorBuilder:
-                  (context, error, stackTrace) => Container(
-                    width: double.infinity,
-                    height: 200,
-                    color: Theme.of(
-                      context,
-                    ).disabledColor.withValues(alpha: 0.3),
-                    child: Icon(
-                      Icons.broken_image_rounded,
-                      size: 50,
-                      color: Theme.of(context).iconTheme.color,
-                    ),
-                  ),
+    return Align(
+      alignment: AlignmentDirectional.topStart,
+      child: Container(
+        width: double.infinity,
+        constraints: const BoxConstraints(maxWidth: 600),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.darkWithOpacity),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            title,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Icon(
-                Icons.access_time_rounded,
-                size: 16,
-                color: Theme.of(context).textTheme.bodySmall?.color,
+          ],
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(
+                thumbnail,
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height * 0.3,
+                fit: BoxFit.cover,
+                errorBuilder:
+                    (context, error, stackTrace) => Container(
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      color: Theme.of(
+                        context,
+                      ).disabledColor.withValues(alpha: 0.3),
+                      child: Icon(
+                        Icons.broken_image_rounded,
+                        size: 50,
+                        color: Theme.of(context).iconTheme.color,
+                      ),
+                    ),
               ),
-              const SizedBox(width: 4),
-              Text(duration, style: Theme.of(context).textTheme.bodyMedium),
-            ],
-          ),
-        ],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(
+                  Icons.access_time_rounded,
+                  size: 16,
+                  color: Theme.of(context).textTheme.bodySmall?.color,
+                ),
+                const SizedBox(width: 4),
+                Text(duration, style: Theme.of(context).textTheme.bodyMedium),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

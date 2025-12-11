@@ -77,4 +77,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unknown => 'Unknown';
+
+  @override
+  String get noContentLoaded => 'No content loaded';
 }

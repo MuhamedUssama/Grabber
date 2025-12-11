@@ -235,6 +235,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unknown'**
   String get unknown;
+
+  /// No description provided for @noContentLoaded.
+  ///
+  /// In en, this message translates to:
+  /// **'No content loaded'**
+  String get noContentLoaded;
 }
 
 class _AppLocalizationsDelegate
