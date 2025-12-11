@@ -80,7 +80,7 @@ class _OptionsSelectorState extends State<OptionsSelector> {
                   _buildTypeTab(
                     context,
                     DownloadType.subtitle,
-                    "Subs",
+                    "Subtitles",
                     Icons.subtitles_rounded,
                   ),
                 ],
@@ -124,7 +124,7 @@ class _OptionsSelectorState extends State<OptionsSelector> {
             if (_selectedType == DownloadType.audio) ...[
               _buildDropdown(
                 label: "Format",
-                value: 'mp3',
+                value: _selectedFormat,
                 items: const [
                   'mp3',
                   'm4a',
@@ -149,7 +149,7 @@ class _OptionsSelectorState extends State<OptionsSelector> {
             if (_selectedType == DownloadType.subtitle) ...[
               _buildDropdown(
                 label: "Languages",
-                value: 'en,ar',
+                value: _selectedLang,
                 items: const ['en,ar', 'en', 'ar'],
                 onChanged: (val) {
                   setState(() => _selectedLang = val!);
@@ -181,6 +181,39 @@ class _OptionsSelectorState extends State<OptionsSelector> {
         onTap: () {
           setState(() {
             _selectedType = type;
+            if (type == DownloadType.audio) {
+              const audioFormats = [
+                'mp3',
+                'm4a',
+                'webm',
+                'flac',
+                'wav',
+                'ogg',
+                'aac',
+              ];
+              if (!audioFormats.contains(_selectedFormat)) {
+                _selectedFormat = 'mp3';
+              }
+            } else if (type == DownloadType.video) {
+              const videoFormats = [
+                'mp4',
+                'webm',
+                'mkv',
+                'avi',
+                'mov',
+                'flv',
+                'wmv',
+              ];
+              if (!videoFormats.contains(_selectedFormat)) {
+                _selectedFormat = 'mp4';
+              }
+            } else if (type == DownloadType.subtitle) {
+              const subtitleLangs = ['en,ar', 'en', 'ar'];
+              if (!subtitleLangs.contains(_selectedLang)) {
+                _selectedLang = 'en,ar';
+              }
+            }
+
             widget.onOptionChanged(
               _selectedType,
               _selectedQuality,
