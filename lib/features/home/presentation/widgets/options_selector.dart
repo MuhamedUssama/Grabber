@@ -1,84 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grabber/core/theme/app_colors.dart';
+import 'package:grabber/features/home/presentation/enums/download_type.dart';
 import 'package:grabber/features/home/presentation/view_model/home_screen_states.dart';
 import 'package:grabber/features/home/presentation/view_model/home_screen_view_model.dart';
 
-// Enum for internal UI selection
-enum DownloadType { video, audio, subtitle }
-
-class OptionsSelector extends StatefulWidget {
-  final Function(DownloadType type, String? quality, String format, String lang)
-  onOptionChanged;
-
-  const OptionsSelector({super.key, required this.onOptionChanged});
-
-  @override
-  State<OptionsSelector> createState() => _OptionsSelectorState();
-}
-
-class _OptionsSelectorState extends State<OptionsSelector> {
-  DownloadType _selectedType = DownloadType.video;
-  String? _selectedQuality;
-  String _selectedFormat = 'mp4';
-  String _selectedLang = 'en,ar';
+class OptionsSelector extends StatelessWidget {
+  const OptionsSelector({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeScreenViewModel, HomeScreenStates>(
+      buildWhen:
+          (previous, current) =>
+              current is OptionsUpdatedState ||
+              current is GetVideoInfoSuccessState ||
+              current is GetVideoInfoEmptyState ||
+              current is HomeScreenInitialState,
       builder: (context, state) {
         final cubit = context.read<HomeScreenViewModel>();
 
-        List<String> resolutions = [
-          "144p",
-          "240p",
-          "360p",
-          "480p",
-          "720p",
-          "1080p",
-          "2160p",
-          "4320p",
-        ];
-        if (state is GetAvalibleResloutionsState) {
-          resolutions = state.resolutions;
-          if (!resolutions.contains(_selectedQuality) &&
-              resolutions.isNotEmpty) {
-            _selectedQuality = resolutions.first;
-            Future.microtask(
-              () => widget.onOptionChanged(
-                _selectedType,
-                _selectedQuality,
-                _selectedFormat,
-                _selectedLang,
-              ),
-            );
-          }
-        }
+        final List<String> resolutions = cubit.availableResolutions;
+        final selectedType = cubit.selectedType;
+        final selectedQuality = cubit.selectedQuality;
+        final selectedFormat = cubit.selectedFormat;
+        final selectedLang = cubit.selectedLang;
 
         return Column(
           children: [
             Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: Theme.of(context).dividerColor),
               ),
               child: Row(
                 children: [
                   _buildTypeTab(
                     context,
+                    cubit,
                     DownloadType.video,
                     "Video",
                     Icons.videocam_rounded,
                   ),
                   _buildTypeTab(
                     context,
+                    cubit,
                     DownloadType.audio,
                     "Audio",
                     Icons.audiotrack_rounded,
                   ),
                   _buildTypeTab(
                     context,
+                    cubit,
                     DownloadType.subtitle,
                     "Subtitles",
                     Icons.subtitles_rounded,
@@ -88,43 +62,37 @@ class _OptionsSelectorState extends State<OptionsSelector> {
             ),
             const SizedBox(height: 16),
 
-            if (_selectedType == DownloadType.video) ...[
+            if (selectedType == DownloadType.video) ...[
               _buildDropdown(
+                context,
                 label: "Quality",
-                value: _selectedQuality,
+                value: selectedQuality,
                 items: resolutions,
                 onChanged: (val) {
-                  setState(() => _selectedQuality = val);
-                  cubit.updateQualityValue(val!);
-                  widget.onOptionChanged(
-                    _selectedType,
-                    _selectedQuality,
-                    _selectedFormat,
-                    _selectedLang,
-                  );
+                  if (val != null) {
+                    cubit.changeQuality(val);
+                  }
                 },
               ),
               const SizedBox(height: 12),
               _buildDropdown(
+                context,
                 label: "Format",
-                value: _selectedFormat,
+                value: selectedFormat,
                 items: const ['mp4', 'webm', 'mkv', 'avi', 'mov', 'flv', 'wmv'],
                 onChanged: (val) {
-                  setState(() => _selectedFormat = val!);
-                  widget.onOptionChanged(
-                    _selectedType,
-                    _selectedQuality,
-                    _selectedFormat,
-                    _selectedLang,
-                  );
+                  if (val != null) {
+                    cubit.changeFormat(val);
+                  }
                 },
               ),
             ],
 
-            if (_selectedType == DownloadType.audio) ...[
+            if (selectedType == DownloadType.audio) ...[
               _buildDropdown(
+                context,
                 label: "Format",
-                value: _selectedFormat,
+                value: selectedFormat,
                 items: const [
                   'mp3',
                   'm4a',
@@ -135,30 +103,23 @@ class _OptionsSelectorState extends State<OptionsSelector> {
                   'aac',
                 ],
                 onChanged: (val) {
-                  setState(() => _selectedFormat = val!);
-                  widget.onOptionChanged(
-                    _selectedType,
-                    _selectedQuality,
-                    _selectedFormat,
-                    _selectedLang,
-                  );
+                  if (val != null) {
+                    cubit.changeFormat(val);
+                  }
                 },
               ),
             ],
 
-            if (_selectedType == DownloadType.subtitle) ...[
+            if (selectedType == DownloadType.subtitle) ...[
               _buildDropdown(
+                context,
                 label: "Languages",
-                value: _selectedLang,
+                value: selectedLang,
                 items: const ['en,ar', 'en', 'ar'],
                 onChanged: (val) {
-                  setState(() => _selectedLang = val!);
-                  widget.onOptionChanged(
-                    _selectedType,
-                    _selectedQuality,
-                    _selectedFormat,
-                    _selectedLang,
-                  );
+                  if (val != null) {
+                    cubit.changeLanguage(val);
+                  }
                 },
               ),
             ],
@@ -170,64 +131,22 @@ class _OptionsSelectorState extends State<OptionsSelector> {
 
   Widget _buildTypeTab(
     BuildContext context,
+    HomeScreenViewModel cubit,
     DownloadType type,
     String label,
     IconData icon,
   ) {
-    final isSelected = _selectedType == type;
+    final isSelected = cubit.selectedType == type;
 
     return Expanded(
       child: GestureDetector(
-        onTap: () {
-          setState(() {
-            _selectedType = type;
-            if (type == DownloadType.audio) {
-              const audioFormats = [
-                'mp3',
-                'm4a',
-                'webm',
-                'flac',
-                'wav',
-                'ogg',
-                'aac',
-              ];
-              if (!audioFormats.contains(_selectedFormat)) {
-                _selectedFormat = 'mp3';
-              }
-            } else if (type == DownloadType.video) {
-              const videoFormats = [
-                'mp4',
-                'webm',
-                'mkv',
-                'avi',
-                'mov',
-                'flv',
-                'wmv',
-              ];
-              if (!videoFormats.contains(_selectedFormat)) {
-                _selectedFormat = 'mp4';
-              }
-            } else if (type == DownloadType.subtitle) {
-              const subtitleLangs = ['en,ar', 'en', 'ar'];
-              if (!subtitleLangs.contains(_selectedLang)) {
-                _selectedLang = 'en,ar';
-              }
-            }
-
-            widget.onOptionChanged(
-              _selectedType,
-              _selectedQuality,
-              _selectedFormat,
-              _selectedLang,
-            );
-          });
-        },
+        onTap: () => cubit.changeDownloadType(type),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
             color: isSelected ? AppColors.darkTextColor : AppColors.transparent,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
             children: [
@@ -252,7 +171,8 @@ class _OptionsSelectorState extends State<OptionsSelector> {
     );
   }
 
-  Widget _buildDropdown({
+  Widget _buildDropdown(
+    BuildContext context, {
     required String label,
     required String? value,
     required List<String> items,
@@ -263,7 +183,7 @@ class _OptionsSelectorState extends State<OptionsSelector> {
       decoration: BoxDecoration(
         color: AppColors.dark,
         border: Border.all(color: AppColors.darkWithOpacity),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         children: [

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grabber/core/l10n/localization/app_localizations.dart';
 import 'package:grabber/core/utils/app_assets.dart';
+import 'package:grabber/features/home/presentation/enums/download_type.dart';
+
 import 'package:grabber/features/home/presentation/view_model/home_screen_states.dart';
 import 'package:grabber/features/home/presentation/view_model/home_screen_view_model.dart';
 import 'package:grabber/features/home/presentation/widgets/download_builder_widget.dart';
@@ -21,11 +23,6 @@ class HomeScreenScaffold extends StatefulWidget {
 }
 
 class _HomeScreenScaffoldState extends State<HomeScreenScaffold> {
-  DownloadType _selectedType = DownloadType.video;
-  String? _selectedQuality;
-  String _selectedFormat = 'mp4';
-  String _selectedLang = 'en,ar';
-
   @override
   Widget build(BuildContext context) {
     final AppLocalizations locale = AppLocalizations.of(context)!;
@@ -65,7 +62,7 @@ class _HomeScreenScaffoldState extends State<HomeScreenScaffold> {
                             ),
                           );
                         }
-                        return Center(child: Text(locale.noContentLoaded));
+                        return const SizedBox.shrink();
                       },
                     ),
                   ),
@@ -83,16 +80,7 @@ class _HomeScreenScaffoldState extends State<HomeScreenScaffold> {
                                   curr is HomeScreenInitialState,
                           builder: (context, state) {
                             if (state is GetVideoInfoSuccessState) {
-                              return OptionsSelector(
-                                onOptionChanged: (type, quality, format, lang) {
-                                  setState(() {
-                                    _selectedType = type;
-                                    _selectedQuality = quality;
-                                    _selectedFormat = format;
-                                    _selectedLang = lang;
-                                  });
-                                },
-                              );
+                              return const OptionsSelector();
                             }
                             return const SizedBox.shrink();
                           },
@@ -117,25 +105,25 @@ class _HomeScreenScaffoldState extends State<HomeScreenScaffold> {
                                 onDownloadPressed: () {
                                   final cubit =
                                       context.read<HomeScreenViewModel>();
-                                  final quality = _selectedQuality;
-                                  if (_selectedType == DownloadType.video &&
+                                  final quality = cubit.selectedQuality;
+                                  final type = cubit.selectedType;
+                                  final format = cubit.selectedFormat;
+                                  final lang = cubit.selectedLang;
+
+                                  if (type == DownloadType.video &&
                                       quality != null) {
-                                    cubit.quality = quality;
+                                    // cubit.quality is already updated by changeQuality
                                     cubit.downloadVideo(
                                       withAudio: true,
-                                      outputFormat: _selectedFormat,
+                                      outputFormat: format,
                                     );
-                                  } else if (_selectedType ==
-                                      DownloadType.audio) {
+                                  } else if (type == DownloadType.audio) {
                                     cubit.downloadAudio(
                                       outputFormat:
-                                          _selectedFormat == 'original'
-                                              ? null
-                                              : _selectedFormat,
+                                          format == 'original' ? null : format,
                                     );
-                                  } else if (_selectedType ==
-                                      DownloadType.subtitle) {
-                                    cubit.downloadSubtitle(lang: _selectedLang);
+                                  } else if (type == DownloadType.subtitle) {
+                                    cubit.downloadSubtitle(lang: lang);
                                   }
                                 },
                               );

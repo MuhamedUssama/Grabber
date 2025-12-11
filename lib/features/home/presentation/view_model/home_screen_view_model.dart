@@ -14,8 +14,8 @@ import 'package:grabber/features/home/domain/usecases/download_audio_usecase.dar
 import 'package:grabber/features/home/domain/usecases/download_subtitle_usecase.dart';
 import 'package:grabber/features/home/domain/usecases/download_video_usecase.dart';
 import 'package:grabber/features/home/domain/usecases/get_task_status_usecase.dart';
-
 import 'package:grabber/features/home/domain/usecases/get_video_info_usecase.dart';
+import 'package:grabber/features/home/presentation/enums/download_type.dart';
 import 'package:injectable/injectable.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -43,7 +43,15 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
   String? _currentTaskId;
   String? path;
   String? videoTitle;
-  String? quality;
+
+  // Options State
+  DownloadType selectedType = DownloadType.video;
+  List<String> availableResolutions = [];
+  String? selectedQuality;
+  String selectedFormat = 'mp4';
+  String selectedLang = 'en,ar';
+
+  // Raw options from API
   List<dynamic> options = [];
 
   final TextEditingController controller = TextEditingController();
@@ -85,7 +93,7 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
           }
         }
 
-        getResolutions();
+        _parseResolutions();
         emit(GetVideoInfoSuccessState(videoInfo));
       });
     } catch (exception) {
@@ -108,27 +116,69 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
     }
   }
 
-  Future<void> getResolutions() async {
+  void _parseResolutions() {
     if (options.isNotEmpty) {
-      final List<String> resolutions =
+      availableResolutions =
           options
               .where((opt) => opt.type == 'video')
               .map((opt) => opt.resolution as String)
               .toSet()
               .toList();
 
-      if (resolutions.isNotEmpty) {
-        emit(GetAvalibleResloutionsState(resolutions));
+      if (availableResolutions.isNotEmpty) {
+        // Set default quality if not set or not in list
+        if (selectedQuality == null ||
+            !availableResolutions.contains(selectedQuality)) {
+          selectedQuality = availableResolutions.first;
+        }
       } else {
-        emit(
-          GetVideoInfoEmptyState(
-            'There is no available resolutions of this video',
-          ),
-        );
+        selectedQuality = null;
       }
     } else {
-      emit(GetVideoInfoEmptyState('There is no available data of this video'));
+      availableResolutions = [];
+      selectedQuality = null;
     }
+  }
+
+  void changeDownloadType(DownloadType type) {
+    selectedType = type;
+
+    // Reset defaults based on type
+    if (type == DownloadType.audio) {
+      const audioFormats = ['mp3', 'm4a', 'webm', 'flac', 'wav', 'ogg', 'aac'];
+      if (!audioFormats.contains(selectedFormat)) {
+        selectedFormat = 'mp3';
+      }
+    } else if (type == DownloadType.video) {
+      // Video specific resets if needed, usually format is mp4
+      const videoFormats = ['mp4', 'webm', 'mkv', 'avi', 'mov', 'flv', 'wmv'];
+      if (!videoFormats.contains(selectedFormat)) {
+        selectedFormat = 'mp4';
+      }
+    } else if (type == DownloadType.subtitle) {
+      const subtitleLangs = ['en,ar', 'en', 'ar'];
+      if (!subtitleLangs.contains(selectedLang)) {
+        selectedLang = 'en,ar';
+      }
+    }
+
+    emit(OptionsUpdatedState());
+  }
+
+  void changeQuality(String quality) {
+    selectedQuality = quality;
+    // updateQualityValue logic merged here
+    emit(OptionsUpdatedState());
+  }
+
+  void changeFormat(String format) {
+    selectedFormat = format;
+    emit(OptionsUpdatedState());
+  }
+
+  void changeLanguage(String lang) {
+    selectedLang = lang;
+    emit(OptionsUpdatedState());
   }
 
   // --- Download Logic ---
@@ -149,9 +199,9 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
     bool withAudio = true,
     String? outputFormat,
   }) async {
-    log('Quality of video is: $quality');
+    log('Quality of video is: $selectedQuality');
 
-    if (quality == null) {
+    if (selectedQuality == null) {
       emit(DownloadFailureState('Choose the quality which you preffer first'));
       return;
     }
@@ -160,7 +210,7 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
       final DownloadVideoRequestModel request = DownloadVideoRequestModel(
         url: controller.text,
         outputDir: path,
-        quality: quality!,
+        quality: selectedQuality!,
         withAudio: withAudio,
         outputFormat: outputFormat,
       );
@@ -261,11 +311,6 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
     if (_currentTaskId != null) {
       await _cancelTaskUsecase(_currentTaskId!);
     }
-  }
-
-  void updateQualityValue(String updatedQuality) {
-    quality = updatedQuality;
-    emit(UpdateQualityValueState(updatedQuality));
   }
 
   String? _urlValidator(String? value) {

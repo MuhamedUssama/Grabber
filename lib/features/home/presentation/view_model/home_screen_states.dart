@@ -62,6 +62,8 @@ final class SelectFolderPathFailureState extends HomeScreenStates {
   SelectFolderPathFailureState(this.message);
 }
 
+final class OptionsUpdatedState extends HomeScreenStates {}
+
 final class GetAvalibleResloutionsState extends HomeScreenStates {
   final List<String> resolutions;
   GetAvalibleResloutionsState(this.resolutions);

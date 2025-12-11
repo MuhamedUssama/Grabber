@@ -20,6 +20,9 @@ class DownloadButtonsWidget extends StatelessWidget {
             icon: const Icon(Icons.download_rounded),
             label: Text(locale.startDownload, style: textTheme.labelLarge),
             style: ElevatedButton.styleFrom(
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(16)),
+              ),
               minimumSize: const Size.fromHeight(64),
             ),
           ),
