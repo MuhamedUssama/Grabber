@@ -33,17 +33,19 @@ class _HomeScreenScaffoldState extends State<HomeScreenScaffold> {
         padding: const EdgeInsets.all(16),
         child: Column(
           spacing: 24,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Text(locale.appName, style: textTheme.displayLarge),
+            const UrlAndBrowseWidget(),
             Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  spacing: 24,
-                  children: [
-                    Text(locale.appName, style: textTheme.displayLarge),
-                    const UrlAndBrowseWidget(),
-                    BlocBuilder<HomeScreenViewModel, HomeScreenStates>(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 24,
+                children: [
+                  // LEFT SIDE (2/3) - Content
+                  Expanded(
+                    flex: 2,
+                    child: BlocBuilder<HomeScreenViewModel, HomeScreenStates>(
                       buildWhen:
                           (prev, curr) =>
                               curr is GetVideoInfoSuccessState ||
@@ -51,11 +53,28 @@ class _HomeScreenScaffoldState extends State<HomeScreenScaffold> {
                               curr is HomeScreenInitialState,
                       builder: (context, state) {
                         if (state is GetVideoInfoSuccessState) {
-                          return Column(
-                            spacing: 24,
-                            children: [
-                              VideoInfoCard(info: state.videoInfo),
-                              OptionsSelector(
+                          return VideoInfoCard(info: state.videoInfo);
+                        }
+                        return const Center(child: Text("No content loaded"));
+                      },
+                    ),
+                  ),
+
+                  // RIGHT SIDE (1/3) - Options & Actions
+                  Expanded(
+                    flex: 1,
+                    child: Column(
+                      spacing: 24,
+                      children: [
+                        BlocBuilder<HomeScreenViewModel, HomeScreenStates>(
+                          buildWhen:
+                              (prev, curr) =>
+                                  curr is GetVideoInfoSuccessState ||
+                                  curr is GetVideoInfoEmptyState ||
+                                  curr is HomeScreenInitialState,
+                          builder: (context, state) {
+                            if (state is GetVideoInfoSuccessState) {
+                              return OptionsSelector(
                                 onOptionChanged: (type, quality, format, lang) {
                                   setState(() {
                                     _selectedType = type;
@@ -64,62 +83,62 @@ class _HomeScreenScaffoldState extends State<HomeScreenScaffold> {
                                     _selectedLang = lang;
                                   });
                                 },
-                              ),
-                            ],
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      },
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          },
+                        ),
+
+                        BlocBuilder<HomeScreenViewModel, HomeScreenStates>(
+                          builder: (context, state) {
+                            if (state is DownloadProgressState) {
+                              return DownloadProgressSection(
+                                progress: state.progress,
+                                status: state.status,
+                              );
+                            } else if (state is DownloadRequestLoadingState) {
+                              return const DownloadBuilderWidget();
+                            }
+
+                            if (context
+                                    .read<HomeScreenViewModel>()
+                                    .videoTitle !=
+                                null) {
+                              return DownloadButtonsWidget(
+                                onDownloadPressed: () {
+                                  final cubit =
+                                      context.read<HomeScreenViewModel>();
+                                  final quality = _selectedQuality;
+                                  if (_selectedType == DownloadType.video &&
+                                      quality != null) {
+                                    cubit.quality = quality;
+                                    cubit.downloadVideo(
+                                      withAudio: true,
+                                      outputFormat: _selectedFormat,
+                                    );
+                                  } else if (_selectedType ==
+                                      DownloadType.audio) {
+                                    cubit.downloadAudio(
+                                      outputFormat:
+                                          _selectedFormat == 'original'
+                                              ? null
+                                              : _selectedFormat,
+                                    );
+                                  } else if (_selectedType ==
+                                      DownloadType.subtitle) {
+                                    cubit.downloadSubtitle(lang: _selectedLang);
+                                  }
+                                },
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          },
+                        ),
+                        const DownloadBuilderWidget(),
+                      ],
                     ),
-
-                    BlocBuilder<HomeScreenViewModel, HomeScreenStates>(
-                      builder: (context, state) {
-                        if (state is DownloadProgressState) {
-                          return DownloadProgressSection(
-                            progress: state.progress,
-                            status: state.status,
-                          );
-                        } else if (state is DownloadRequestLoadingState) {
-                          // return const Center(
-                          //   child: CircularProgressIndicator(),
-                          // );
-                          return const DownloadBuilderWidget();
-                        }
-
-                        if (context.read<HomeScreenViewModel>().videoTitle !=
-                            null) {
-                          return DownloadButtonsWidget(
-                            onDownloadPressed: () {
-                              final cubit = context.read<HomeScreenViewModel>();
-                              final quality = _selectedQuality;
-                              if (_selectedType == DownloadType.video &&
-                                  quality != null) {
-                                cubit.quality = quality;
-                                cubit.downloadVideo(
-                                  withAudio: true,
-                                  outputFormat: _selectedFormat,
-                                );
-                              } else if (_selectedType == DownloadType.audio) {
-                                cubit.downloadAudio(
-                                  outputFormat:
-                                      _selectedFormat == 'original'
-                                          ? null
-                                          : _selectedFormat,
-                                );
-                              } else if (_selectedType ==
-                                  DownloadType.subtitle) {
-                                cubit.downloadSubtitle(lang: _selectedLang);
-                              }
-                            },
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      },
-                    ),
-
-                    const DownloadBuilderWidget(),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
             Text(

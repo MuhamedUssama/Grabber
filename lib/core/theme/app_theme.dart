@@ -35,6 +35,8 @@ abstract class AppTheme {
       selectionColor: AppColors.darkTextColor.withValues(alpha: 0.2),
     ),
 
+    dividerColor: AppColors.darkWithOpacity,
+
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
         backgroundColor: WidgetStateProperty.all(AppColors.darkTextColor),

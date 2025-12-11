@@ -64,22 +64,28 @@ class _OptionsSelectorState extends State<OptionsSelector> {
             Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
+                ),
               ),
               child: Row(
                 children: [
                   _buildTypeTab(
+                    context,
                     DownloadType.video,
                     "Video",
                     Icons.videocam_rounded,
                   ),
                   _buildTypeTab(
+                    context,
                     DownloadType.audio,
                     "Audio",
                     Icons.audiotrack_rounded,
                   ),
                   _buildTypeTab(
+                    context,
                     DownloadType.subtitle,
                     "Subs",
                     Icons.subtitles_rounded,
@@ -92,6 +98,7 @@ class _OptionsSelectorState extends State<OptionsSelector> {
             // Contextual Options
             if (_selectedType == DownloadType.video) ...[
               _buildDropdown(
+                context,
                 label: "Quality",
                 value: _selectedQuality,
                 items: resolutions,
@@ -108,6 +115,7 @@ class _OptionsSelectorState extends State<OptionsSelector> {
               ),
               const SizedBox(height: 12),
               _buildDropdown(
+                context,
                 label: "Format",
                 value: _selectedFormat,
                 items: const ['mp4', 'original'],
@@ -125,17 +133,25 @@ class _OptionsSelectorState extends State<OptionsSelector> {
 
             if (_selectedType == DownloadType.audio) ...[
               _buildDropdown(
+                context,
                 label: "Format",
                 value: 'mp3',
                 items: const ['mp3', 'm4a', 'original'],
                 onChanged: (val) {
-                  // Just placeholder for visual, logic usually forces mp3
+                  setState(() => _selectedFormat = val!);
+                  widget.onOptionChanged(
+                    _selectedType,
+                    _selectedQuality,
+                    _selectedFormat,
+                    _selectedLang,
+                  );
                 },
               ),
             ],
 
             if (_selectedType == DownloadType.subtitle) ...[
               _buildDropdown(
+                context,
                 label: "Languages",
                 value: 'en,ar',
                 items: const ['en,ar', 'en', 'ar'],
@@ -156,8 +172,15 @@ class _OptionsSelectorState extends State<OptionsSelector> {
     );
   }
 
-  Widget _buildTypeTab(DownloadType type, String label, IconData icon) {
+  Widget _buildTypeTab(
+    BuildContext context,
+    DownloadType type,
+    String label,
+    IconData icon,
+  ) {
     final isSelected = _selectedType == type;
+    final theme = Theme.of(context);
+
     return Expanded(
       child: GestureDetector(
         onTap: () {
@@ -176,25 +199,21 @@ class _OptionsSelectorState extends State<OptionsSelector> {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: isSelected ? Colors.white : Colors.transparent,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow:
+            color:
                 isSelected
-                    ? [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 4,
-                        spreadRadius: 1,
-                      ),
-                    ]
-                    : [],
+                    ? theme.primaryColor.withValues(alpha: 0.1)
+                    : Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
           ),
           child: Column(
             children: [
               Icon(
                 icon,
                 size: 20,
-                color: isSelected ? Colors.black : Colors.grey,
+                color:
+                    isSelected
+                        ? theme.primaryColor
+                        : theme.iconTheme.color?.withValues(alpha: 0.5),
               ),
               const SizedBox(height: 4),
               Text(
@@ -202,7 +221,10 @@ class _OptionsSelectorState extends State<OptionsSelector> {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                  color: isSelected ? Colors.black : Colors.grey,
+                  color:
+                      isSelected
+                          ? theme.primaryColor
+                          : theme.textTheme.bodySmall?.color,
                 ),
               ),
             ],
@@ -212,25 +234,28 @@ class _OptionsSelectorState extends State<OptionsSelector> {
     );
   }
 
-  Widget _buildDropdown({
+  Widget _buildDropdown(
+    BuildContext context, {
     required String label,
     required String? value,
     required List<String> items,
     required Function(String?) onChanged,
   }) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
+        color: theme.inputDecorationTheme.fillColor,
+        border: Border.all(color: theme.dividerColor),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
           Text(
             "$label:",
-            style: const TextStyle(
+            style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w500,
-              color: Colors.grey,
+              color: theme.hintColor,
             ),
           ),
           const SizedBox(width: 12),
@@ -238,21 +263,19 @@ class _OptionsSelectorState extends State<OptionsSelector> {
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 value: (items.contains(value)) ? value : null,
-                hint: const Text("Select"),
+                hint: Text(
+                  "Select",
+                  style: theme.inputDecorationTheme.hintStyle,
+                ),
                 isExpanded: true,
+                dropdownColor: theme.cardColor,
+                iconEnabledColor: theme.iconTheme.color,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
                 items:
                     items
-                        .map(
-                          (e) => DropdownMenuItem(
-                            value: e,
-                            child: Text(
-                              e,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        )
+                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                         .toList(),
                 onChanged: onChanged,
               ),
