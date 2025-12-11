@@ -6,7 +6,6 @@ import 'package:grabber/features/home/presentation/enums/download_type.dart';
 
 import 'package:grabber/features/home/presentation/view_model/home_screen_states.dart';
 import 'package:grabber/features/home/presentation/view_model/home_screen_view_model.dart';
-import 'package:grabber/features/home/presentation/widgets/download_builder_widget.dart';
 import 'package:grabber/features/home/presentation/widgets/download_buttons_widget.dart';
 import 'package:grabber/features/home/presentation/widgets/download_progress_section.dart';
 import 'package:grabber/features/home/presentation/widgets/folder_path_widget.dart';
@@ -93,8 +92,6 @@ class _HomeScreenScaffoldState extends State<HomeScreenScaffold> {
                                 progress: state.progress,
                                 status: state.status,
                               );
-                            } else if (state is DownloadRequestLoadingState) {
-                              return const DownloadBuilderWidget();
                             }
 
                             if (context
@@ -112,7 +109,6 @@ class _HomeScreenScaffoldState extends State<HomeScreenScaffold> {
 
                                   if (type == DownloadType.video &&
                                       quality != null) {
-                                    // cubit.quality is already updated by changeQuality
                                     cubit.downloadVideo(
                                       withAudio: true,
                                       outputFormat: format,
