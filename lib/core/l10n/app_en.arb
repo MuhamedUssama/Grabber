@@ -3,7 +3,7 @@
   "url": "Put url here",
   "appName": "Grabber",
   "browse": "Browse",
-  "getInfo": "Get video resolutions",
+  "getInfo": "Get video info",
   "folderSelected": "Folder selected successfully",
   "noFolderSelected": "No folder selected",
   "somethingWentWorng": "Something went wrong",
@@ -22,5 +22,6 @@
   "audioOnly": "Audio Only",
   "original": "Original",
   "unknown": "Unknown",
-  "noContentLoaded": "No content loaded"
+  "noContentLoaded": "No content loaded",
+  "pickFolder": "Save Directory"
 }

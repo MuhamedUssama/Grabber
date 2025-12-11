@@ -22,5 +22,6 @@
   "audioOnly": "صوت فقط",
   "original": "أصلي",
   "unknown": "غير معروف",
-  "noContentLoaded": "لا يوجد محتوى"
+  "noContentLoaded": "لا يوجد محتوى",
+  "pickFolder": "اختر مجلد الحفظ"
 }

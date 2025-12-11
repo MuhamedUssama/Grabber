@@ -15,7 +15,6 @@ class UrlAndBrowseWidget extends StatelessWidget {
     final AppLocalizations locale = AppLocalizations.of(context)!;
     final TextTheme textTheme = Theme.of(context).textTheme;
     return Row(
-      spacing: 16,
       children: [
         Expanded(
           child: CustomTextField(
@@ -27,10 +26,10 @@ class UrlAndBrowseWidget extends StatelessWidget {
                   context: context,
                   controller: context.read<HomeScreenViewModel>().controller,
                 );
-
-                Future.delayed(Duration(seconds: 1), () {
-                  // ignore: use_build_context_synchronously
-                  context.read<HomeScreenViewModel>().getVideoInfo();
+                Future.delayed(Duration(milliseconds: 500), () {
+                  if (context.mounted) {
+                    context.read<HomeScreenViewModel>().getVideoInfo();
+                  }
                 });
               },
               color: AppColors.darkTextColor,
@@ -41,11 +40,24 @@ class UrlAndBrowseWidget extends StatelessWidget {
             ),
           ),
         ),
+        const SizedBox(width: 16),
         ElevatedButton(
+          onPressed: () {
+            context.read<HomeScreenViewModel>().getVideoInfo();
+          },
+          child: Text(locale.getInfo, style: textTheme.labelLarge),
+        ),
+        const SizedBox(width: 8),
+        IconButton(
+          tooltip: locale.pickFolder,
           onPressed: () {
             context.read<HomeScreenViewModel>().pickFolderPath();
           },
-          child: Text(locale.browse, style: textTheme.labelLarge),
+          icon: const Icon(
+            Icons.folder,
+            size: 24,
+            color: AppColors.darkTextColor,
+          ),
         ),
       ],
     );

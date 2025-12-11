@@ -44,14 +44,12 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
   String? path;
   String? videoTitle;
 
-  // Options State
   DownloadType selectedType = DownloadType.video;
   List<String> availableResolutions = [];
   String? selectedQuality;
   String selectedFormat = 'mp4';
   String selectedLang = 'en,ar';
 
-  // Raw options from API
   List<dynamic> options = [];
 
   final TextEditingController controller = TextEditingController();
@@ -126,7 +124,6 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
               .toList();
 
       if (availableResolutions.isNotEmpty) {
-        // Set default quality if not set or not in list
         if (selectedQuality == null ||
             !availableResolutions.contains(selectedQuality)) {
           selectedQuality = availableResolutions.first;
@@ -143,14 +140,12 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
   void changeDownloadType(DownloadType type) {
     selectedType = type;
 
-    // Reset defaults based on type
     if (type == DownloadType.audio) {
       const audioFormats = ['mp3', 'm4a', 'webm', 'flac', 'wav', 'ogg', 'aac'];
       if (!audioFormats.contains(selectedFormat)) {
-        selectedFormat = 'mp3';
+        selectedFormat = 'webm';
       }
     } else if (type == DownloadType.video) {
-      // Video specific resets if needed, usually format is mp4
       const videoFormats = ['mp4', 'webm', 'mkv', 'avi', 'mov', 'flv', 'wmv'];
       if (!videoFormats.contains(selectedFormat)) {
         selectedFormat = 'mp4';
@@ -167,7 +162,6 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
 
   void changeQuality(String quality) {
     selectedQuality = quality;
-    // updateQualityValue logic merged here
     emit(OptionsUpdatedState());
   }
 
@@ -180,8 +174,6 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
     selectedLang = lang;
     emit(OptionsUpdatedState());
   }
-
-  // --- Download Logic ---
 
   Future<void> downloadAudio({String? outputFormat}) async {
     await _startDownloadProcess(() async {

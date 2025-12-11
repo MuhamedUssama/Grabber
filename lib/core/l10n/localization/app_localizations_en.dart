@@ -21,7 +21,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get browse => 'Browse';
 
   @override
-  String get getInfo => 'Get video resolutions';
+  String get getInfo => 'Get video info';
 
   @override
   String get folderSelected => 'Folder selected successfully';
@@ -80,4 +80,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noContentLoaded => 'No content loaded';
+
+  @override
+  String get pickFolder => 'Save Directory';
 }

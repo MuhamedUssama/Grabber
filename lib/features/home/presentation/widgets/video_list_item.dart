@@ -11,14 +11,11 @@ class VideoListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Using BlocBuilder as requested to allow for future state-dependent rebuilds
     return BlocBuilder<HomeScreenViewModel, HomeScreenStates>(
       builder: (context, state) {
         return Container(
-          // margin: const EdgeInsets.only(bottom: 12),
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            // color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: Theme.of(context).dividerColor),
           ),

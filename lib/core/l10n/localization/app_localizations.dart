@@ -125,7 +125,7 @@ abstract class AppLocalizations {
   /// No description provided for @getInfo.
   ///
   /// In en, this message translates to:
-  /// **'Get video resolutions'**
+  /// **'Get video info'**
   String get getInfo;
 
   /// No description provided for @folderSelected.
@@ -241,6 +241,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No content loaded'**
   String get noContentLoaded;
+
+  /// No description provided for @pickFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Directory'**
+  String get pickFolder;
 }
 
 class _AppLocalizationsDelegate

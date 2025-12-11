@@ -6,7 +6,9 @@ abstract class AppTheme {
   static ThemeData darkTheme = ThemeData(
     scaffoldBackgroundColor: AppColors.dark,
     primaryColor: AppColors.darkTextColor,
-
+    scrollbarTheme: ScrollbarThemeData(
+      thumbColor: WidgetStateProperty.all(AppColors.darkHeadTextColor),
+    ),
     textTheme: TextTheme(
       displayLarge: GoogleFonts.risque(
         color: AppColors.darkTextColor,

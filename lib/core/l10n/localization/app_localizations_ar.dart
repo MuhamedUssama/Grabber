@@ -80,4 +80,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noContentLoaded => 'لا يوجد محتوى';
+
+  @override
+  String get pickFolder => 'اختر مجلد الحفظ';
 }
