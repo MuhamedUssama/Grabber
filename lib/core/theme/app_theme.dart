@@ -110,5 +110,17 @@ abstract class AppTheme {
     snackBarTheme: SnackBarThemeData(
       backgroundColor: AppColors.darkWithOpacity,
     ),
+
+    checkboxTheme: CheckboxThemeData(
+      fillColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return AppColors.darkTextColor;
+        }
+        return AppColors.transparent;
+      }),
+      checkColor: WidgetStateProperty.all(AppColors.dark),
+      side: const BorderSide(color: AppColors.darkTextColor, width: 2),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+    ),
   );
 }

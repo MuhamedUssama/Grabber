@@ -9,6 +9,7 @@ import 'package:grabber/features/home/data/models/request/download_audio_request
 import 'package:grabber/features/home/data/models/request/download_subtitle_request_model.dart';
 import 'package:grabber/features/home/data/models/request/download_video_request_model.dart';
 import 'package:grabber/features/home/data/models/request/get_video_info_request.dart';
+import 'package:grabber/features/home/data/models/response/get_info_response_model.dart';
 import 'package:grabber/features/home/domain/usecases/cancel_task_usecase.dart';
 import 'package:grabber/features/home/domain/usecases/download_audio_usecase.dart';
 import 'package:grabber/features/home/domain/usecases/download_subtitle_usecase.dart';
@@ -91,6 +92,10 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
           }
         }
 
+        currentVideoInfo = videoInfo;
+        currentEntries = videoInfo.data.entries;
+        selectedVideoUrls = currentEntries.map((e) => e.url as String).toSet();
+
         _parseResolutions();
         emit(GetVideoInfoSuccessState(videoInfo));
       });
@@ -113,6 +118,8 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
       log("Error from pick folder: $error");
     }
   }
+
+  GetInfoResponseModel? currentVideoInfo;
 
   void _parseResolutions() {
     if (options.isNotEmpty) {
@@ -167,6 +174,45 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
 
   void changeFormat(String format) {
     selectedFormat = format;
+    emit(OptionsUpdatedState());
+  }
+
+  Set<String> selectedVideoUrls = {};
+
+  bool get isAllSelected {
+    if (options.isEmpty) return false;
+    // We need access to the full list of entries to know if all are selected.
+    // However, I don't store the full list of entries in a field here, only `options` (which is confusingly named, it is 'resolutions' options).
+    // I need to store the current entries or I can check based on the count.
+    // Ideally I should store `currentEntries` in the ViewModel.
+    // For now, I will add `List<Entries> currentEntries = [];` to the ViewModel.
+    return currentEntries.isNotEmpty &&
+        selectedVideoUrls.length == currentEntries.length;
+  }
+
+  // Store current entries to manage selection
+  List<dynamic> currentEntries =
+      []; // Using dynamic to avoid importing Entries if not needed, but better to import.
+  // Actually I need to import Entries. It is in 'get_info_response_model.dart'.
+
+  // ... rest of methods
+
+  void toggleVideoSelection(String url) {
+    if (selectedVideoUrls.contains(url)) {
+      selectedVideoUrls.remove(url);
+    } else {
+      selectedVideoUrls.add(url);
+    }
+    emit(OptionsUpdatedState());
+  }
+
+  void selectAllVideos() {
+    selectedVideoUrls = currentEntries.map((e) => e.url as String).toSet();
+    emit(OptionsUpdatedState());
+  }
+
+  void deselectAllVideos() {
+    selectedVideoUrls.clear();
     emit(OptionsUpdatedState());
   }
 

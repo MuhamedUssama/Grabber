@@ -50,10 +50,15 @@ class _HomeScreenScaffoldState extends State<HomeScreenScaffold> {
                               curr is GetVideoInfoSuccessState ||
                               curr is GetVideoInfoEmptyState ||
                               curr is HomeScreenInitialState ||
-                              curr is GetVideoInfoLoadingState,
+                              curr is GetVideoInfoLoadingState ||
+                              curr is OptionsUpdatedState,
                       builder: (context, state) {
+                        final vm = context.read<HomeScreenViewModel>();
                         if (state is GetVideoInfoSuccessState) {
                           return VideoInfoCard(info: state.videoInfo);
+                        } else if (state is OptionsUpdatedState &&
+                            vm.currentVideoInfo != null) {
+                          return VideoInfoCard(info: vm.currentVideoInfo!);
                         } else if (state is GetVideoInfoLoadingState) {
                           return Center(
                             child: LottieBuilder.asset(

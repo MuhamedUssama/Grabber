@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grabber/core/theme/app_colors.dart';
 import 'package:grabber/features/home/data/models/response/get_info_response_model.dart';
+import 'package:grabber/features/home/presentation/view_model/home_screen_view_model.dart';
 import 'package:grabber/features/home/presentation/widgets/video_list_item.dart';
 
 class VideoInfoCard extends StatelessWidget {
@@ -31,12 +33,33 @@ class VideoInfoCard extends StatelessWidget {
             if (info.data.playlistTitle != null)
               Padding(
                 padding: const EdgeInsets.all(16),
-                child: Text(
-                  info.data.playlistTitle!,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.darkTextColor,
-                  ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        info.data.playlistTitle!,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.darkTextColor,
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        final cubit = context.read<HomeScreenViewModel>();
+                        if (cubit.isAllSelected) {
+                          cubit.deselectAllVideos();
+                        } else {
+                          cubit.selectAllVideos();
+                        }
+                      },
+                      child: Text(
+                        context.read<HomeScreenViewModel>().isAllSelected
+                            ? "Deselect all"
+                            : "Select all",
+                      ),
+                    ),
+                  ],
                 ),
               ),
             const Divider(color: AppColors.darkWithOpacity),

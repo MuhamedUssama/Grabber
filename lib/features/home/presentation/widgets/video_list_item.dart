@@ -22,6 +22,18 @@ class VideoListItem extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Checkbox(
+                value: context
+                    .read<HomeScreenViewModel>()
+                    .selectedVideoUrls
+                    .contains(entry.url),
+                onChanged: (value) {
+                  context.read<HomeScreenViewModel>().toggleVideoSelection(
+                    entry.url,
+                  );
+                },
+              ),
+              const SizedBox(width: 8),
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Image.network(
