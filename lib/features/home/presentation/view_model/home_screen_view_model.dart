@@ -373,10 +373,8 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
 
       bool anyActive = false;
 
-      // Iterating over a copy of values to avoid concurrent modification logic issues if we were removing
-      // but we are just updating.
-      for (final currentStatus in tasksStatus.values) {
-        final status = currentStatus.status;
+      for (final TaskStatus currentStatus in tasksStatus.values) {
+        final String status = currentStatus.status;
         if (status == 'completed' ||
             status == 'failed' ||
             status == 'cancelled') {
@@ -446,7 +444,28 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
   }
 
   Future<void> cancelTask(String taskId) async {
-    await _cancelTaskUsecase(taskId);
+    try {
+      await _cancelTaskUsecase(taskId);
+    } catch (e) {
+      log("Error cancelling task: $e");
+    }
+
+    if (tasksStatus.containsKey(taskId)) {
+      tasksStatus[taskId] = tasksStatus[taskId]!.copyWith(status: 'cancelled');
+      emit(DownloadProgressUpdatedState());
+    }
+
+    // Check if we should stop polling if all are now terminal
+    bool anyActive = tasksStatus.values.any(
+      (task) =>
+          task.status != 'completed' &&
+          task.status != 'failed' &&
+          task.status != 'cancelled',
+    );
+
+    if (!anyActive) {
+      _stopPolling();
+    }
   }
 
   void clearTasks() {

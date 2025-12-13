@@ -190,16 +190,14 @@ class DownloadButtonsWidget extends StatelessWidget {
                 if (areAllTerminal)
                   Padding(
                     padding: const EdgeInsets.only(top: 16.0),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: cubit.clearTasks,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.success,
-                          foregroundColor: Colors.white,
-                        ),
-                        child: Text("Done"),
+                    child: ElevatedButton(
+                      onPressed: cubit.clearTasks,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.success,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(double.infinity, 56),
                       ),
+                      child: Text("Done"),
                     ),
                   ),
               ],
@@ -207,18 +205,15 @@ class DownloadButtonsWidget extends StatelessWidget {
           );
         }
 
-        return SizedBox(
-          width: double.infinity,
-          child: ElevatedButton.icon(
-            onPressed: onDownloadPressed,
-            icon: const Icon(Icons.download_rounded),
-            label: Text(locale.startDownload, style: textTheme.labelLarge),
-            style: ElevatedButton.styleFrom(
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(16)),
-              ),
-              minimumSize: const Size.fromHeight(64),
+        return ElevatedButton.icon(
+          onPressed: onDownloadPressed,
+          icon: const Icon(Icons.download_rounded),
+          label: Text(locale.startDownload, style: textTheme.labelLarge),
+          style: ElevatedButton.styleFrom(
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(16)),
             ),
+            minimumSize: const Size.fromHeight(64),
           ),
         );
       },
