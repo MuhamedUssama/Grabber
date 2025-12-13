@@ -95,7 +95,13 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
 
         currentVideoInfo = videoInfo;
         currentEntries = videoInfo.data.entries;
-        selectedVideoUrls = currentEntries.map((e) => e.url as String).toSet();
+
+        _urlToDataMap.clear();
+        for (final entry in currentEntries) {
+          _urlToDataMap[entry.url] = entry;
+        }
+
+        selectedVideoUrls = currentEntries.map((e) => e.url).toSet();
 
         _parseResolutions();
         emit(GetVideoInfoSuccessState(videoInfo));
@@ -187,7 +193,8 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
   }
 
   // Store current entries to manage selection
-  List<dynamic> currentEntries = [];
+  List<Entries> currentEntries = [];
+  final Map<String, Entries> _urlToDataMap = {};
 
   void toggleVideoSelection(String url) {
     if (selectedVideoUrls.contains(url)) {
@@ -199,7 +206,7 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
   }
 
   void selectAllVideos() {
-    selectedVideoUrls = currentEntries.map((e) => e.url as String).toSet();
+    selectedVideoUrls = currentEntries.map((e) => e.url).toSet();
     emit(OptionsUpdatedState());
   }
 
@@ -251,7 +258,7 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
     }
 
     await _getDownloadDirectory();
-    // emit(DownloadRequestLoadingState()); // Maybe emit loading?
+    emit(DownloadRequestLoadingState());
 
     List<Future> futures = [];
     for (String url in urlsToDownload) {
@@ -259,6 +266,7 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
     }
 
     await Future.wait(futures);
+    emit(DownloadProgressUpdatedState());
     _startPolling();
   }
 
@@ -282,8 +290,18 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
         },
         (taskId) {
           urlToTaskId[url] = taskId;
+
+          String title = "Video";
+          if (_urlToDataMap.containsKey(url)) {
+            title = _urlToDataMap[url]!.title;
+          } else if (controller.text == url && videoTitle != null) {
+            title = videoTitle!;
+          }
+
           tasksStatus[taskId] = TaskStatus(
             taskId: taskId,
+            title: title,
+            url: url,
             status: 'pending',
             progress: 0.0,
           );
@@ -325,10 +343,12 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
       result.fold((error) => emit(DownloadFailureState(error.toString())), (
         taskId,
       ) {
-        // Adapt single task (Audio/Subtitle) to new map system
-        // Note: Audio/Subtitle don't have URL tracking in the same way, but we can store them.
+        String title = videoTitle ?? "Download";
+
         tasksStatus[taskId] = TaskStatus(
           taskId: taskId,
+          title: title,
+          url: controller.text,
           status: 'pending',
           progress: 0.0,
         );
@@ -423,6 +443,16 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
     if (_currentTaskId != null) {
       await _cancelTaskUsecase(_currentTaskId!);
     }
+  }
+
+  Future<void> cancelTask(String taskId) async {
+    await _cancelTaskUsecase(taskId);
+  }
+
+  void clearTasks() {
+    tasksStatus.clear();
+    _currentTaskId = null;
+    emit(DownloadProgressUpdatedState());
   }
 
   String? _urlValidator(String? value) {

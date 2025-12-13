@@ -12,4 +12,6 @@ abstract class AppColors {
   static const Color darkHeadTextColor = Color(0xff8b8988);
 
   static const Color error = Colors.red;
+
+  static const Color success = Colors.green;
 }
