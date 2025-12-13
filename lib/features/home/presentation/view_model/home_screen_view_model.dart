@@ -17,6 +17,7 @@ import 'package:grabber/features/home/domain/usecases/download_video_usecase.dar
 import 'package:grabber/features/home/domain/usecases/get_task_status_usecase.dart';
 import 'package:grabber/features/home/domain/usecases/get_video_info_usecase.dart';
 import 'package:grabber/features/home/presentation/enums/download_type.dart';
+import 'package:grabber/features/home/domain/entites/task_status.dart';
 import 'package:injectable/injectable.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -181,21 +182,12 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
 
   bool get isAllSelected {
     if (options.isEmpty) return false;
-    // We need access to the full list of entries to know if all are selected.
-    // However, I don't store the full list of entries in a field here, only `options` (which is confusingly named, it is 'resolutions' options).
-    // I need to store the current entries or I can check based on the count.
-    // Ideally I should store `currentEntries` in the ViewModel.
-    // For now, I will add `List<Entries> currentEntries = [];` to the ViewModel.
     return currentEntries.isNotEmpty &&
         selectedVideoUrls.length == currentEntries.length;
   }
 
   // Store current entries to manage selection
-  List<dynamic> currentEntries =
-      []; // Using dynamic to avoid importing Entries if not needed, but better to import.
-  // Actually I need to import Entries. It is in 'get_info_response_model.dart'.
-
-  // ... rest of methods
+  List<dynamic> currentEntries = [];
 
   void toggleVideoSelection(String url) {
     if (selectedVideoUrls.contains(url)) {
@@ -244,17 +236,62 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
       return;
     }
 
-    await _startDownloadProcess(() async {
+    Set<String> urlsToDownload = {};
+    if (selectedVideoUrls.isNotEmpty) {
+      urlsToDownload = selectedVideoUrls;
+    } else {
+      urlsToDownload = {controller.text};
+    }
+
+    final String? validationMessage = _urlValidator(controller.text);
+
+    if (urlsToDownload.isEmpty && validationMessage != null) {
+      emit(ValidateUrlState(validationMessage));
+      return;
+    }
+
+    await _getDownloadDirectory();
+    // emit(DownloadRequestLoadingState()); // Maybe emit loading?
+
+    List<Future> futures = [];
+    for (String url in urlsToDownload) {
+      futures.add(_initiateDownload(url, withAudio, outputFormat));
+    }
+
+    await Future.wait(futures);
+    _startPolling();
+  }
+
+  Future<void> _initiateDownload(
+    String url,
+    bool withAudio,
+    String? outputFormat,
+  ) async {
+    try {
       final DownloadVideoRequestModel request = DownloadVideoRequestModel(
-        url: controller.text,
+        url: url,
         outputDir: path,
         quality: selectedQuality!,
         withAudio: withAudio,
         outputFormat: outputFormat,
       );
       final result = await _videoUsecase(request);
-      return result;
-    });
+      result.fold(
+        (error) {
+          log("Failed to initiate download for $url: ${error.message}");
+        },
+        (taskId) {
+          urlToTaskId[url] = taskId;
+          tasksStatus[taskId] = TaskStatus(
+            taskId: taskId,
+            status: 'pending',
+            progress: 0.0,
+          );
+        },
+      );
+    } catch (e) {
+      log("Exception initiating download for $url: $e");
+    }
   }
 
   Future<void> downloadSubtitle({String lang = 'en,ar'}) async {
@@ -288,55 +325,92 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
       result.fold((error) => emit(DownloadFailureState(error.toString())), (
         taskId,
       ) {
-        _currentTaskId = taskId;
-        _startPolling(taskId);
+        // Adapt single task (Audio/Subtitle) to new map system
+        // Note: Audio/Subtitle don't have URL tracking in the same way, but we can store them.
+        tasksStatus[taskId] = TaskStatus(
+          taskId: taskId,
+          status: 'pending',
+          progress: 0.0,
+        );
+        _startPolling();
       });
     } catch (error) {
       emit(DownloadFailureState(error.toString()));
     }
   }
 
-  void _startPolling(String taskId) {
+  Map<String, String> urlToTaskId = {};
+  Map<String, TaskStatus> tasksStatus = {};
+
+  void _startPolling() {
     _stopPolling();
 
     _pollingTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
-      final result = await _taskStatusUsecase(taskId);
+      if (tasksStatus.isEmpty) {
+        _stopPolling();
+        return;
+      }
 
-      result.fold(
-        (error) {
-          _stopPolling();
-          emit(DownloadFailureState("Polling Failed: ${error.message}"));
-        },
-        (statusResponse) {
-          final data = statusResponse.data;
-          if (data == null) return;
+      bool anyActive = false;
 
-          final status = data.status;
-          final progress = data.progress ?? 0.0;
+      // Iterating over a copy of values to avoid concurrent modification logic issues if we were removing
+      // but we are just updating.
+      for (final currentStatus in tasksStatus.values) {
+        final status = currentStatus.status;
+        if (status == 'completed' ||
+            status == 'failed' ||
+            status == 'cancelled') {
+          continue;
+        }
 
-          if (status == 'processing' ||
-              status == 'pending' ||
-              status == 'canceling') {
-            emit(
-              DownloadProgressState(
-                progress: progress / 100.0,
-                status: status ?? 'processing',
-                taskId: taskId,
-              ),
+        anyActive = true;
+        final taskId = currentStatus.taskId;
+        final result = await _taskStatusUsecase(taskId);
+
+        result.fold(
+          (error) {
+            tasksStatus[taskId] = currentStatus.copyWith(
+              status: 'failed',
+              error: error.message,
             );
-          } else if (status == 'completed') {
-            _stopPolling();
-            final resultPath = data.result ?? "Unknown Path";
-            emit(DownloadCompletedState(resultPath));
-          } else if (status == 'cancelled') {
-            _stopPolling();
-            emit(DownloadCancelledState());
-          } else if (status == 'failed') {
-            _stopPolling();
-            emit(DownloadFailureState(data.error ?? "Unknown Error"));
-          }
-        },
-      );
+          },
+          (statusResponse) {
+            final data = statusResponse.data;
+            if (data != null) {
+              final newStatus = data.status ?? 'processing';
+              final progress = (data.progress ?? 0.0) / 100.0;
+
+              if (newStatus == 'completed') {
+                tasksStatus[taskId] = currentStatus.copyWith(
+                  status: 'completed',
+                  progress: 1.0,
+                  resultPath: data.result,
+                );
+              } else if (newStatus == 'failed') {
+                tasksStatus[taskId] = currentStatus.copyWith(
+                  status: 'failed',
+                  error: data.error,
+                );
+              } else if (newStatus == 'cancelled') {
+                tasksStatus[taskId] = currentStatus.copyWith(
+                  status: 'cancelled',
+                );
+              } else {
+                tasksStatus[taskId] = currentStatus.copyWith(
+                  status: newStatus,
+                  progress: progress,
+                );
+              }
+            }
+          },
+        );
+      }
+
+      emit(DownloadProgressUpdatedState());
+
+      if (!anyActive) {
+        _stopPolling();
+      }
     });
   }
 

@@ -36,24 +36,89 @@ class VideoListItem extends StatelessWidget {
               const SizedBox(width: 8),
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  entry.thumbnail,
-                  width: 100,
-                  height: 65,
-                  fit: BoxFit.cover,
-                  errorBuilder:
-                      (context, error, stackTrace) => Container(
-                        width: 100,
-                        height: 65,
-                        color:
-                            Theme.of(
-                              context,
-                            ).colorScheme.surfaceContainerHighest,
-                        child: Icon(
-                          Icons.broken_image_rounded,
-                          color: Theme.of(context).iconTheme.color,
-                        ),
-                      ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Image.network(
+                      entry.thumbnail,
+                      width: 100,
+                      height: 65,
+                      fit: BoxFit.cover,
+                      errorBuilder:
+                          (context, error, stackTrace) => Container(
+                            width: 100,
+                            height: 65,
+                            color:
+                                Theme.of(
+                                  context,
+                                ).colorScheme.surfaceContainerHighest,
+                            child: Icon(
+                              Icons.broken_image_rounded,
+                              color: Theme.of(context).iconTheme.color,
+                            ),
+                          ),
+                    ),
+                    Builder(
+                      builder: (context) {
+                        final cubit = context.read<HomeScreenViewModel>();
+                        final taskId = cubit.urlToTaskId[entry.url];
+                        final taskStatus =
+                            taskId != null ? cubit.tasksStatus[taskId] : null;
+
+                        if (taskStatus == null) return const SizedBox.shrink();
+
+                        if (taskStatus.status == 'processing' ||
+                            taskStatus.status == 'pending') {
+                          return Container(
+                            width: 100,
+                            height: 65,
+                            color: Colors.black.withValues(alpha: 0.6),
+                            child: Center(
+                              child: SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  value:
+                                      taskStatus.status == 'pending'
+                                          ? null
+                                          : taskStatus.progress,
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          );
+                        } else if (taskStatus.status == 'completed') {
+                          return Container(
+                            width: 100,
+                            height: 65,
+                            color: Colors.black.withValues(alpha: 0.6),
+                            child: const Center(
+                              child: Icon(
+                                Icons.check_circle_rounded,
+                                color: Colors.green,
+                                size: 32,
+                              ),
+                            ),
+                          );
+                        } else if (taskStatus.status == 'failed') {
+                          return Container(
+                            width: 100,
+                            height: 65,
+                            color: Colors.black.withValues(alpha: 0.6),
+                            child: const Center(
+                              child: Icon(
+                                Icons.error_rounded,
+                                color: Colors.red,
+                                size: 32,
+                              ),
+                            ),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(width: 12),

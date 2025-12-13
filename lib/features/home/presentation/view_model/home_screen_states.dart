@@ -78,3 +78,5 @@ final class UpdateQualityValueState extends HomeScreenStates {
   final String quality;
   UpdateQualityValueState(this.quality);
 }
+
+final class DownloadProgressUpdatedState extends HomeScreenStates {}
