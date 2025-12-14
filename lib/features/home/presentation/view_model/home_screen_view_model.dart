@@ -539,6 +539,48 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
     }
   }
 
+  Future<void> cancelAllTasks() async {
+    final activeTasks =
+        tasksStatus.values
+            .where(
+              (task) => task.status == 'pending' || task.status == 'processing',
+            )
+            .toList();
+
+    if (activeTasks.isEmpty) return;
+
+    for (var task in activeTasks) {
+      tasksStatus[task.taskId] = task.copyWith(status: 'cancelled');
+    }
+    emit(DownloadProgressUpdatedState());
+
+    final List<Future> futures = [];
+    for (var task in activeTasks) {
+      futures.add(_cancelTaskUsecase(task.taskId));
+    }
+
+    try {
+      await Future.wait(futures);
+    } catch (e) {
+      log("Error while cancelling all: $e");
+    }
+
+    _checkPollingStatus();
+  }
+
+  void _checkPollingStatus() {
+    bool anyActive = tasksStatus.values.any(
+      (task) =>
+          task.status != 'completed' &&
+          task.status != 'failed' &&
+          task.status != 'cancelled',
+    );
+
+    if (!anyActive) {
+      _stopPolling();
+    }
+  }
+
   Future<void> cancelTask(String taskId) async {
     try {
       await _cancelTaskUsecase(taskId);
@@ -551,17 +593,7 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
       emit(DownloadProgressUpdatedState());
     }
 
-    // Check if we should stop polling if all are now terminal
-    bool anyActive = tasksStatus.values.any(
-      (task) =>
-          task.status != 'completed' &&
-          task.status != 'failed' &&
-          task.status != 'cancelled',
-    );
-
-    if (!anyActive) {
-      _stopPolling();
-    }
+    _checkPollingStatus();
   }
 
   void clearTasks() {

@@ -51,6 +51,38 @@ class DownloadButtonsWidget extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                if (tasks.length > 1) ...[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Downloading..", style: textTheme.titleLarge),
+                      if (tasks.any(
+                        (task) =>
+                            task.status == 'pending' ||
+                            task.status == 'processing',
+                      ))
+                        ElevatedButton.icon(
+                          onPressed: cubit.cancelAllTasks,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.error,
+                            foregroundColor: AppColors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          icon: const Icon(Icons.close, size: 18),
+                          label: const Text("Cancel All"),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  const Divider(height: 1),
+                  const SizedBox(height: 12),
+                ],
                 Flexible(
                   child: ListView.separated(
                     shrinkWrap: true,
@@ -293,7 +325,7 @@ class DownloadButtonsWidget extends StatelessWidget {
                   : const Icon(Icons.download_rounded),
           label:
               state is DownloadRequestLoadingState
-                  ? const CircularProgressIndicator()
+                  ? const CircularProgressIndicator(color: AppColors.dark)
                   : Text(locale.startDownload, style: textTheme.labelLarge),
           style: ElevatedButton.styleFrom(
             shape: const RoundedRectangleBorder(
