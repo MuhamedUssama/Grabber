@@ -221,15 +221,61 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
   }
 
   Future<void> downloadAudio({String? outputFormat}) async {
-    await _startDownloadProcess(() async {
-      DownloadAudioRequestModel request = DownloadAudioRequestModel(
-        url: controller.text,
+    Set<String> urlsToDownload = {};
+    if (selectedVideoUrls.isNotEmpty) {
+      urlsToDownload = selectedVideoUrls;
+    } else {
+      urlsToDownload = {controller.text};
+    }
+
+    final String? validationMessage = _urlValidator(controller.text);
+
+    if (urlsToDownload.isEmpty && validationMessage != null) {
+      emit(ValidateUrlState(validationMessage));
+      return;
+    }
+
+    await _getDownloadDirectory();
+    emit(DownloadRequestLoadingState());
+
+    List<Future> futures = [];
+    for (String url in urlsToDownload) {
+      futures.add(_initiateAudioDownload(url, outputFormat));
+    }
+
+    await Future.wait(futures);
+    emit(DownloadProgressUpdatedState());
+    _startPolling();
+  }
+
+  Future<void> _initiateAudioDownload(String url, String? outputFormat) async {
+    try {
+      final DownloadAudioRequestModel request = DownloadAudioRequestModel(
+        url: url,
         outputDir: path,
         outputFormat: outputFormat,
       );
       final result = await _audioUsecase(request);
-      return result;
-    });
+      result.fold(
+        (error) {
+          log("Failed to initiate audio download for $url: ${error.message}");
+        },
+        (taskId) {
+          urlToTaskId[url] = taskId;
+          String title = _getTitleForUrl(url);
+
+          tasksStatus[taskId] = TaskStatus(
+            taskId: taskId,
+            title: title,
+            url: url,
+            status: 'pending',
+            progress: 0.0,
+          );
+        },
+      );
+    } catch (e) {
+      log("Exception initiating audio download for $url: $e");
+    }
   }
 
   Future<void> downloadVideo({
@@ -313,50 +359,72 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
   }
 
   Future<void> downloadSubtitle({String lang = 'en,ar'}) async {
-    await _startDownloadProcess(() async {
+    Set<String> urlsToDownload = {};
+    if (selectedVideoUrls.isNotEmpty) {
+      urlsToDownload = selectedVideoUrls;
+    } else {
+      urlsToDownload = {controller.text};
+    }
+
+    final String? validationMessage = _urlValidator(controller.text);
+
+    if (urlsToDownload.isEmpty && validationMessage != null) {
+      emit(ValidateUrlState(validationMessage));
+      return;
+    }
+
+    await _getDownloadDirectory();
+    emit(DownloadRequestLoadingState());
+
+    List<Future> futures = [];
+    for (String url in urlsToDownload) {
+      futures.add(_initiateSubtitleDownload(url, lang));
+    }
+
+    await Future.wait(futures);
+    emit(DownloadProgressUpdatedState());
+    _startPolling();
+  }
+
+  Future<void> _initiateSubtitleDownload(String url, String lang) async {
+    try {
       final DownloadSubtitleRequestModel request = DownloadSubtitleRequestModel(
-        url: controller.text,
+        url: url,
         outputDir: path,
         lang: lang,
       );
       final result = await _subtitleUsecase(request);
-      return result;
-    });
+      result.fold(
+        (error) {
+          log(
+            "Failed to initiate subtitle download for $url: ${error.message}",
+          );
+        },
+        (taskId) {
+          urlToTaskId[url] = taskId;
+          String title = _getTitleForUrl(url);
+
+          tasksStatus[taskId] = TaskStatus(
+            taskId: taskId,
+            title: title,
+            url: url,
+            status: 'pending',
+            progress: 0.0,
+          );
+        },
+      );
+    } catch (e) {
+      log("Exception initiating subtitle download for $url: $e");
+    }
   }
 
-  Future<void> _startDownloadProcess(
-    Future<dynamic> Function() usecaseCall,
-  ) async {
-    try {
-      final String? validationMessage = _urlValidator(controller.text);
-      if (validationMessage != null) {
-        emit(ValidateUrlState(validationMessage));
-        return;
-      }
-
-      await _getDownloadDirectory();
-
-      emit(DownloadRequestLoadingState());
-
-      final result = await usecaseCall();
-
-      result.fold((error) => emit(DownloadFailureState(error.toString())), (
-        taskId,
-      ) {
-        String title = videoTitle ?? "Download";
-
-        tasksStatus[taskId] = TaskStatus(
-          taskId: taskId,
-          title: title,
-          url: controller.text,
-          status: 'pending',
-          progress: 0.0,
-        );
-        _startPolling();
-      });
-    } catch (error) {
-      emit(DownloadFailureState(error.toString()));
+  String _getTitleForUrl(String url) {
+    if (_urlToDataMap.containsKey(url)) {
+      return _urlToDataMap[url]!.title;
+    } else if (controller.text == url && videoTitle != null) {
+      return videoTitle!;
     }
+    return "Download";
   }
 
   Map<String, String> urlToTaskId = {};
