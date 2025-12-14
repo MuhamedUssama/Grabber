@@ -5,6 +5,7 @@ import 'package:grabber/core/theme/app_colors.dart';
 import 'package:grabber/features/home/presentation/view_model/home_screen_states.dart';
 import 'package:grabber/features/home/presentation/view_model/home_screen_view_model.dart';
 import 'package:grabber/core/utils/formatters.dart';
+import 'package:grabber/features/home/domain/entites/task_status.dart';
 
 class DownloadButtonsWidget extends StatelessWidget {
   final VoidCallback onDownloadPressed;
@@ -132,10 +133,7 @@ class DownloadButtonsWidget extends StatelessWidget {
                                             .withValues(alpha: 0.2),
                                         borderRadius: BorderRadius.circular(4),
                                         minHeight: 8,
-                                        color: _getStatusColor(
-                                          context,
-                                          task.status,
-                                        ),
+                                        color: _getStatusColor(context, task),
                                       ),
                                     ),
                                     if (!isSingle) ...[
@@ -159,6 +157,12 @@ class DownloadButtonsWidget extends StatelessWidget {
                                           Icons.check_circle,
                                           size: 20,
                                           color: Colors.green,
+                                        )
+                                      else if (task.isSubtitleMissingError)
+                                        Icon(
+                                          Icons.subtitles_off_outlined,
+                                          size: 20,
+                                          color: Colors.amber[700],
                                         )
                                       else if (task.status == 'failed')
                                         const Icon(
@@ -230,11 +234,29 @@ class DownloadButtonsWidget extends StatelessWidget {
                                 if (task.error != null)
                                   Padding(
                                     padding: const EdgeInsets.only(top: 4),
-                                    child: Text(
-                                      task.error!,
-                                      style: textTheme.bodySmall?.copyWith(
-                                        color: AppColors.error,
-                                      ),
+                                    child: Row(
+                                      spacing: 6,
+                                      children: [
+                                        Icon(
+                                          Icons.error_outline,
+                                          size: 16,
+                                          color:
+                                              task.isSubtitleMissingError
+                                                  ? Colors.amber[700]
+                                                  : AppColors.error,
+                                        ),
+                                        Text(
+                                          task.isSubtitleMissingError
+                                              ? "No subtitles available"
+                                              : task.error!,
+                                          style: textTheme.bodySmall?.copyWith(
+                                            color:
+                                                task.isSubtitleMissingError
+                                                    ? Colors.amber[700]
+                                                    : AppColors.error,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                               ],
@@ -284,8 +306,10 @@ class DownloadButtonsWidget extends StatelessWidget {
     );
   }
 
-  Color _getStatusColor(BuildContext context, String status) {
-    switch (status) {
+  Color _getStatusColor(BuildContext context, TaskStatus task) {
+    if (task.isSubtitleMissingError) return Colors.amber[700]!;
+
+    switch (task.status) {
       case 'completed':
         return Colors.green;
       case 'failed':
@@ -295,5 +319,13 @@ class DownloadButtonsWidget extends StatelessWidget {
       default:
         return Theme.of(context).primaryColor;
     }
+  }
+}
+
+extension TaskStatusUIX on TaskStatus {
+  bool get isSubtitleMissingError {
+    if (status != 'failed') return false;
+    final err = error?.toLowerCase() ?? '';
+    return err.contains('no subtitles');
   }
 }
