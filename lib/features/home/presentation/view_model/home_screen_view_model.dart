@@ -434,7 +434,9 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
   void _startPolling() {
     _stopPolling();
 
-    _pollingTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+    _pollingTimer = Timer.periodic(const Duration(milliseconds: 500), (
+      timer,
+    ) async {
       if (tasksStatus.isEmpty) {
         _stopPolling();
         return;
@@ -486,6 +488,9 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
                 tasksStatus[taskId] = currentStatus.copyWith(
                   status: newStatus,
                   progress: progress,
+                  speed: data.speed,
+                  eta: data.eta,
+                  totalSize: data.totalSize,
                 );
               }
             }

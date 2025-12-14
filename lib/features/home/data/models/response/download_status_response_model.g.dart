@@ -41,6 +41,9 @@ Data _$DataFromJson(Map<String, dynamic> json) => Data(
   progress: (json['progress'] as num?)?.toDouble(),
   result: json['result'] as String?,
   status: json['status'] as String?,
+  totalSize: (json['total_size'] as num?)?.toInt(),
+  speed: (json['speed'] as num?)?.toDouble(),
+  eta: (json['eta'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$DataToJson(Data instance) => <String, dynamic>{
@@ -48,4 +51,7 @@ Map<String, dynamic> _$DataToJson(Data instance) => <String, dynamic>{
   'progress': instance.progress,
   'result': instance.result,
   'status': instance.status,
+  'total_size': instance.totalSize,
+  'speed': instance.speed,
+  'eta': instance.eta,
 };

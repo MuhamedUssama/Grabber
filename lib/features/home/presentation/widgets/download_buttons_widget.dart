@@ -4,6 +4,7 @@ import 'package:grabber/core/l10n/localization/app_localizations.dart';
 import 'package:grabber/core/theme/app_colors.dart';
 import 'package:grabber/features/home/presentation/view_model/home_screen_states.dart';
 import 'package:grabber/features/home/presentation/view_model/home_screen_view_model.dart';
+import 'package:grabber/core/utils/formatters.dart';
 
 class DownloadButtonsWidget extends StatelessWidget {
   final VoidCallback onDownloadPressed;
@@ -149,27 +150,59 @@ class DownloadButtonsWidget extends StatelessWidget {
                               ],
                             ],
                           ),
+                          if (task.status == 'processing')
+                            Padding(
+                              padding: const EdgeInsets.only(top: 6),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "${Formatter.formatBytes(task.speed)}/s",
+                                    style: textTheme.bodySmall?.copyWith(
+                                      color: AppColors.darkHeadTextColor,
+                                      fontSize: 11,
+                                    ),
+                                  ),
+                                  Text(
+                                    "${Formatter.formatBytes((task.totalSize ?? 0) * task.progress)} / ${Formatter.formatBytes(task.totalSize)}",
+                                    style: textTheme.bodySmall?.copyWith(
+                                      color: AppColors.darkHeadTextColor,
+                                      fontSize: 11,
+                                    ),
+                                  ),
+                                  Text(
+                                    "ETA: ${Formatter.formatDuration(task.eta)}",
+                                    style: textTheme.bodySmall?.copyWith(
+                                      color: AppColors.darkHeadTextColor,
+                                      fontSize: 11,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           if (isSingle &&
                               (task.status == 'processing' ||
                                   task.status == 'pending'))
                             Padding(
                               padding: const EdgeInsets.only(top: 12.0),
-                              child: SizedBox(
-                                width: double.infinity,
-                                child: OutlinedButton(
-                                  onPressed:
-                                      () => cubit.cancelTask(task.taskId),
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: AppColors.error,
-                                    side: const BorderSide(
-                                      color: AppColors.error,
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 12,
-                                    ),
+                              child: OutlinedButton.icon(
+                                onPressed: () => cubit.cancelTask(task.taskId),
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: AppColors.error,
+                                  side: const BorderSide(
+                                    color: AppColors.error,
                                   ),
-                                  child: Text(locale.cancel),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  minimumSize: const Size.fromHeight(56),
                                 ),
+                                icon: const Icon(Icons.close_rounded),
+                                label: Text(locale.cancel),
                               ),
                             ),
                           if (task.error != null)

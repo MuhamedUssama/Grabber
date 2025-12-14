@@ -7,6 +7,9 @@ class TaskStatus {
   final double progress;
   final String? resultPath;
   final String? error;
+  final int? totalSize;
+  final double? speed;
+  final int? eta;
 
   TaskStatus({
     required this.taskId,
@@ -16,6 +19,9 @@ class TaskStatus {
     required this.progress,
     this.resultPath,
     this.error,
+    this.totalSize,
+    this.speed,
+    this.eta,
   });
 
   TaskStatus copyWith({
@@ -26,6 +32,9 @@ class TaskStatus {
     double? progress,
     String? resultPath,
     String? error,
+    int? totalSize,
+    double? speed,
+    int? eta,
   }) {
     return TaskStatus(
       taskId: taskId ?? this.taskId,
@@ -35,6 +44,9 @@ class TaskStatus {
       progress: progress ?? this.progress,
       resultPath: resultPath ?? this.resultPath,
       error: error ?? this.error,
+      totalSize: totalSize ?? this.totalSize,
+      speed: speed ?? this.speed,
+      eta: eta ?? this.eta,
     );
   }
 }

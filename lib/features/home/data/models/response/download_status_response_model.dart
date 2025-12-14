@@ -45,12 +45,21 @@ class Data {
   final String? result;
   @JsonKey(name: 'status')
   final String? status;
+  @JsonKey(name: 'total_size')
+  final int? totalSize;
+  @JsonKey(name: 'speed')
+  final double? speed;
+  @JsonKey(name: 'eta')
+  final int? eta;
 
   Data({
     required this.error,
     required this.progress,
     required this.result,
     required this.status,
+    required this.totalSize,
+    required this.speed,
+    required this.eta,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => _$DataFromJson(json);

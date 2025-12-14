@@ -38,8 +38,8 @@ Entries _$EntriesFromJson(Map<String, dynamic> json) => Entries(
   dateText: json['date_text'] as String,
   durationText: json['duration_text'] as String,
   options:
-      (json['options'] as List<dynamic>)
-          .map((e) => Options.fromJson(e as Map<String, dynamic>))
+      (json['options'] as List<dynamic>?)
+          ?.map((e) => Options.fromJson(e as Map<String, dynamic>))
           .toList(),
   thumbnail: json['thumbnail'] as String,
   title: json['title'] as String,
