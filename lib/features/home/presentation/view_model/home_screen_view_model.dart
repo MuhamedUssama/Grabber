@@ -155,7 +155,7 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
     selectedType = type;
 
     if (type == DownloadType.audio) {
-      const audioFormats = ['mp3', 'm4a', 'webm', 'flac', 'wav', 'ogg', 'aac'];
+      const audioFormats = ['mp3', 'm4a', 'webm', 'opus', 'flac', 'wav'];
       if (!audioFormats.contains(selectedFormat)) {
         selectedFormat = 'webm';
       }
@@ -250,10 +250,11 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
 
   Future<void> _initiateAudioDownload(String url, String? outputFormat) async {
     try {
+      final String? formatToSend = outputFormat == 'webm' ? null : outputFormat;
       final DownloadAudioRequestModel request = DownloadAudioRequestModel(
         url: url,
         outputDir: path,
-        outputFormat: outputFormat,
+        outputFormat: formatToSend,
       );
       final result = await _audioUsecase(request);
       result.fold(

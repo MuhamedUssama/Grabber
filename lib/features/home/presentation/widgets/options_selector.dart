@@ -93,15 +93,7 @@ class OptionsSelector extends StatelessWidget {
                 context,
                 label: "Format",
                 value: selectedFormat,
-                items: const [
-                  'mp3',
-                  'm4a',
-                  'webm',
-                  'flac',
-                  'wav',
-                  'ogg',
-                  'aac',
-                ],
+                items: const ['mp3', 'm4a', 'webm', 'opus', 'flac', 'wav'],
                 onChanged: (val) {
                   if (val != null) {
                     cubit.changeFormat(val);
