@@ -51,6 +51,7 @@ class _HomeScreenScaffoldState extends State<HomeScreenScaffold> {
                               curr is GetVideoInfoEmptyState ||
                               curr is HomeScreenInitialState ||
                               curr is GetVideoInfoLoadingState ||
+                              curr is GetVideoInfoErrorState ||
                               curr is OptionsUpdatedState,
                       builder: (context, state) {
                         final vm = context.read<HomeScreenViewModel>();
@@ -64,6 +65,10 @@ class _HomeScreenScaffoldState extends State<HomeScreenScaffold> {
                             child: LottieBuilder.asset(
                               AppAnimations.dynamicLoading,
                             ),
+                          );
+                        } else if (state is GetVideoInfoErrorState) {
+                          return Center(
+                            child: LottieBuilder.asset(AppAnimations.error),
                           );
                         }
                         return const SizedBox.shrink();
