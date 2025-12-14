@@ -10,6 +10,7 @@ class TaskStatus {
   final int? totalSize;
   final double? speed;
   final int? eta;
+  final String? thumbnailUrl;
 
   TaskStatus({
     required this.taskId,
@@ -22,6 +23,7 @@ class TaskStatus {
     this.totalSize,
     this.speed,
     this.eta,
+    this.thumbnailUrl,
   });
 
   TaskStatus copyWith({
@@ -35,6 +37,7 @@ class TaskStatus {
     int? totalSize,
     double? speed,
     int? eta,
+    String? thumbnailUrl,
   }) {
     return TaskStatus(
       taskId: taskId ?? this.taskId,
@@ -47,6 +50,7 @@ class TaskStatus {
       totalSize: totalSize ?? this.totalSize,
       speed: speed ?? this.speed,
       eta: eta ?? this.eta,
+      thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
     );
   }
 }

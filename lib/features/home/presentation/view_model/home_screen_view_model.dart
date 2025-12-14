@@ -264,6 +264,7 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
         (taskId) {
           urlToTaskId[url] = taskId;
           String title = _getTitleForUrl(url);
+          String? thumbnail = _getThumbnailForUrl(url);
 
           tasksStatus[taskId] = TaskStatus(
             taskId: taskId,
@@ -271,6 +272,7 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
             url: url,
             status: 'pending',
             progress: 0.0,
+            thumbnailUrl: thumbnail,
           );
         },
       );
@@ -339,10 +341,16 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
           urlToTaskId[url] = taskId;
 
           String title = "Video";
+          String? thumbnail;
           if (_urlToDataMap.containsKey(url)) {
             title = _urlToDataMap[url]!.title;
+            thumbnail = _urlToDataMap[url]!.thumbnail;
           } else if (controller.text == url && videoTitle != null) {
             title = videoTitle!;
+            if (currentVideoInfo != null &&
+                currentVideoInfo!.data.entries.isNotEmpty) {
+              thumbnail = currentVideoInfo!.data.entries.first.thumbnail;
+            }
           }
 
           tasksStatus[taskId] = TaskStatus(
@@ -351,6 +359,7 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
             url: url,
             status: 'pending',
             progress: 0.0,
+            thumbnailUrl: thumbnail,
           );
         },
       );
@@ -404,6 +413,7 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
         (taskId) {
           urlToTaskId[url] = taskId;
           String title = _getTitleForUrl(url);
+          String? thumbnail = _getThumbnailForUrl(url);
 
           tasksStatus[taskId] = TaskStatus(
             taskId: taskId,
@@ -411,6 +421,7 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
             url: url,
             status: 'pending',
             progress: 0.0,
+            thumbnailUrl: thumbnail,
           );
         },
       );
@@ -426,6 +437,17 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
       return videoTitle!;
     }
     return "Download";
+  }
+
+  String? _getThumbnailForUrl(String url) {
+    if (_urlToDataMap.containsKey(url)) {
+      return _urlToDataMap[url]!.thumbnail;
+    } else if (controller.text == url &&
+        currentVideoInfo != null &&
+        currentVideoInfo!.data.entries.isNotEmpty) {
+      return currentVideoInfo!.data.entries.first.thumbnail;
+    }
+    return null;
   }
 
   Map<String, String> urlToTaskId = {};
