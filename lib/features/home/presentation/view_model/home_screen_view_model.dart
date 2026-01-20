@@ -20,6 +20,7 @@ import 'package:grabber/features/home/presentation/enums/download_type.dart';
 import 'package:grabber/features/home/domain/entites/task_status.dart';
 import 'package:injectable/injectable.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:queue/queue.dart';
 
 import 'home_screen_states.dart';
 
@@ -55,6 +56,8 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
   List<dynamic> options = [];
 
   final TextEditingController controller = TextEditingController();
+
+  Queue _downloadQueue = Queue(parallel: 3);
 
   @override
   Future<void> close() {
@@ -132,7 +135,7 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
     if (options.isNotEmpty) {
       availableResolutions =
           options
-              .where((opt) => opt.type == 'video')
+              .where((opt) => opt.type == 'video' && opt.resolution != null)
               .map((opt) => opt.resolution as String)
               .toSet()
               .toList();
@@ -238,17 +241,44 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
     await _getDownloadDirectory();
     emit(DownloadRequestLoadingState());
 
-    List<Future> futures = [];
+    int count = 0;
     for (String url in urlsToDownload) {
-      futures.add(_initiateAudioDownload(url, outputFormat));
+      count++;
+      final tempTaskId = 'queued_${url.hashCode}';
+      String title = _getTitleForUrl(url);
+      String? thumbnail = _getThumbnailForUrl(url);
+
+      tasksStatus[tempTaskId] = TaskStatus(
+        taskId: tempTaskId,
+        title: title,
+        url: url,
+        status: 'queued',
+        progress: 0.0,
+        thumbnailUrl: thumbnail,
+      );
+
+      _downloadQueue.add(
+        () => _initiateAudioDownload(url, outputFormat, tempTaskId),
+      );
+
+      if (count % 5 == 0) {
+        emit(DownloadProgressUpdatedState());
+        await Future.delayed(Duration.zero);
+      }
     }
 
-    await Future.wait(futures);
     emit(DownloadProgressUpdatedState());
     _startPolling();
   }
 
-  Future<void> _initiateAudioDownload(String url, String? outputFormat) async {
+  Future<void> _initiateAudioDownload(
+    String url,
+    String? outputFormat,
+    String tempTaskId,
+  ) async {
+    // If the task was cancelled while in queue, don't start it
+    if (tasksStatus[tempTaskId]?.status == 'cancelled') return;
+
     try {
       final String? formatToSend = outputFormat == 'webm' ? null : outputFormat;
       final DownloadAudioRequestModel request = DownloadAudioRequestModel(
@@ -260,24 +290,42 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
       result.fold(
         (error) {
           log("Failed to initiate audio download for $url: ${error.message}");
+          // Update status to failed
+          if (tasksStatus.containsKey(tempTaskId)) {
+            tasksStatus[tempTaskId] = tasksStatus[tempTaskId]!.copyWith(
+              status: 'failed',
+              error: error.message,
+            );
+          }
         },
         (taskId) {
           urlToTaskId[url] = taskId;
-          String title = _getTitleForUrl(url);
-          String? thumbnail = _getThumbnailForUrl(url);
+
+          // Remove temp task and add real task
+          // We preserve the thumbnail and title from the temp task if possible
+          final tempTask = tasksStatus[tempTaskId];
+
+          tasksStatus.remove(tempTaskId);
 
           tasksStatus[taskId] = TaskStatus(
             taskId: taskId,
-            title: title,
+            title: tempTask?.title ?? "Audio",
             url: url,
             status: 'pending',
             progress: 0.0,
-            thumbnailUrl: thumbnail,
+            thumbnailUrl: tempTask?.thumbnailUrl,
           );
         },
       );
+      // emit(DownloadProgressUpdatedState());
     } catch (e) {
       log("Exception initiating audio download for $url: $e");
+      if (tasksStatus.containsKey(tempTaskId)) {
+        tasksStatus[tempTaskId] = tasksStatus[tempTaskId]!.copyWith(
+          status: 'failed',
+          error: e.toString(),
+        );
+      }
     }
   }
 
@@ -309,12 +357,43 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
     await _getDownloadDirectory();
     emit(DownloadRequestLoadingState());
 
-    List<Future> futures = [];
+    int count = 0;
     for (String url in urlsToDownload) {
-      futures.add(_initiateDownload(url, withAudio, outputFormat));
+      count++;
+      final tempTaskId = 'queued_${url.hashCode}';
+
+      String title = "Video";
+      String? thumbnail;
+      if (_urlToDataMap.containsKey(url)) {
+        title = _urlToDataMap[url]!.title;
+        thumbnail = _urlToDataMap[url]!.thumbnail;
+      } else if (controller.text == url && videoTitle != null) {
+        title = videoTitle!;
+        if (currentVideoInfo != null &&
+            currentVideoInfo!.data.entries.isNotEmpty) {
+          thumbnail = currentVideoInfo!.data.entries.first.thumbnail;
+        }
+      }
+
+      tasksStatus[tempTaskId] = TaskStatus(
+        taskId: tempTaskId,
+        title: title,
+        url: url,
+        status: 'queued',
+        progress: 0.0,
+        thumbnailUrl: thumbnail,
+      );
+
+      _downloadQueue.add(
+        () => _initiateDownload(url, withAudio, outputFormat, tempTaskId),
+      );
+
+      if (count % 5 == 0) {
+        emit(DownloadProgressUpdatedState());
+        await Future.delayed(Duration.zero);
+      }
     }
 
-    await Future.wait(futures);
     emit(DownloadProgressUpdatedState());
     _startPolling();
   }
@@ -323,7 +402,11 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
     String url,
     bool withAudio,
     String? outputFormat,
+    String tempTaskId,
   ) async {
+    // If cancelled in queue
+    if (tasksStatus[tempTaskId]?.status == 'cancelled') return;
+
     try {
       final DownloadVideoRequestModel request = DownloadVideoRequestModel(
         url: url,
@@ -336,35 +419,37 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
       result.fold(
         (error) {
           log("Failed to initiate download for $url: ${error.message}");
+          if (tasksStatus.containsKey(tempTaskId)) {
+            tasksStatus[tempTaskId] = tasksStatus[tempTaskId]!.copyWith(
+              status: 'failed',
+              error: error.message,
+            );
+          }
         },
         (taskId) {
           urlToTaskId[url] = taskId;
-
-          String title = "Video";
-          String? thumbnail;
-          if (_urlToDataMap.containsKey(url)) {
-            title = _urlToDataMap[url]!.title;
-            thumbnail = _urlToDataMap[url]!.thumbnail;
-          } else if (controller.text == url && videoTitle != null) {
-            title = videoTitle!;
-            if (currentVideoInfo != null &&
-                currentVideoInfo!.data.entries.isNotEmpty) {
-              thumbnail = currentVideoInfo!.data.entries.first.thumbnail;
-            }
-          }
+          final tempTask = tasksStatus[tempTaskId];
+          tasksStatus.remove(tempTaskId);
 
           tasksStatus[taskId] = TaskStatus(
             taskId: taskId,
-            title: title,
+            title: tempTask?.title ?? "Video",
             url: url,
             status: 'pending',
             progress: 0.0,
-            thumbnailUrl: thumbnail,
+            thumbnailUrl: tempTask?.thumbnailUrl,
           );
         },
       );
+      // emit(DownloadProgressUpdatedState());
     } catch (e) {
       log("Exception initiating download for $url: $e");
+      if (tasksStatus.containsKey(tempTaskId)) {
+        tasksStatus[tempTaskId] = tasksStatus[tempTaskId]!.copyWith(
+          status: 'failed',
+          error: e.toString(),
+        );
+      }
     }
   }
 
@@ -386,17 +471,42 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
     await _getDownloadDirectory();
     emit(DownloadRequestLoadingState());
 
-    List<Future> futures = [];
+    int count = 0;
     for (String url in urlsToDownload) {
-      futures.add(_initiateSubtitleDownload(url, lang));
+      count++;
+      final tempTaskId = 'queued_${url.hashCode}';
+      String title = _getTitleForUrl(url);
+      String? thumbnail = _getThumbnailForUrl(url);
+
+      tasksStatus[tempTaskId] = TaskStatus(
+        taskId: tempTaskId,
+        title: title,
+        url: url,
+        status: 'queued',
+        progress: 0.0,
+        thumbnailUrl: thumbnail,
+      );
+      _downloadQueue.add(
+        () => _initiateSubtitleDownload(url, lang, tempTaskId),
+      );
+
+      if (count % 5 == 0) {
+        emit(DownloadProgressUpdatedState());
+        await Future.delayed(Duration.zero);
+      }
     }
 
-    await Future.wait(futures);
     emit(DownloadProgressUpdatedState());
     _startPolling();
   }
 
-  Future<void> _initiateSubtitleDownload(String url, String lang) async {
+  Future<void> _initiateSubtitleDownload(
+    String url,
+    String lang,
+    String tempTaskId,
+  ) async {
+    if (tasksStatus[tempTaskId]?.status == 'cancelled') return;
+
     try {
       final DownloadSubtitleRequestModel request = DownloadSubtitleRequestModel(
         url: url,
@@ -409,24 +519,37 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
           log(
             "Failed to initiate subtitle download for $url: ${error.message}",
           );
+          if (tasksStatus.containsKey(tempTaskId)) {
+            tasksStatus[tempTaskId] = tasksStatus[tempTaskId]!.copyWith(
+              status: 'failed',
+              error: error.message,
+            );
+          }
         },
         (taskId) {
           urlToTaskId[url] = taskId;
-          String title = _getTitleForUrl(url);
-          String? thumbnail = _getThumbnailForUrl(url);
+          final tempTask = tasksStatus[tempTaskId];
+          tasksStatus.remove(tempTaskId);
 
           tasksStatus[taskId] = TaskStatus(
             taskId: taskId,
-            title: title,
+            title: tempTask?.title ?? "Subtitle",
             url: url,
             status: 'pending',
             progress: 0.0,
-            thumbnailUrl: thumbnail,
+            thumbnailUrl: tempTask?.thumbnailUrl,
           );
         },
       );
+      // emit(DownloadProgressUpdatedState());
     } catch (e) {
       log("Exception initiating subtitle download for $url: $e");
+      if (tasksStatus.containsKey(tempTaskId)) {
+        tasksStatus[tempTaskId] = tasksStatus[tempTaskId]!.copyWith(
+          status: 'failed',
+          error: e.toString(),
+        );
+      }
     }
   }
 
@@ -470,10 +593,12 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
         final String status = currentStatus.status;
         if (status == 'completed' ||
             status == 'failed' ||
-            status == 'cancelled') {
+            status == 'cancelled' ||
+            status == 'queued') {
           continue;
         }
 
+        // Keep polling for 'canceling', 'pending', and 'processing' states
         anyActive = true;
         final taskId = currentStatus.taskId;
         final result = await _taskStatusUsecase(taskId);
@@ -540,22 +665,41 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
   }
 
   Future<void> cancelAllTasks() async {
+    _downloadQueue.cancel();
+    _downloadQueue = Queue(parallel: 3);
+
     final activeTasks =
         tasksStatus.values
             .where(
-              (task) => task.status == 'pending' || task.status == 'processing',
+              (task) =>
+                  task.status == 'pending' ||
+                  task.status == 'processing' ||
+                  task.status == 'queued',
             )
             .toList();
 
     if (activeTasks.isEmpty) return;
 
+    // Store original statuses before updating
+    final tasksNeedingBackendCancel =
+        activeTasks
+            .where(
+              (task) =>
+                  task.status != 'queued' && !task.taskId.startsWith('queued_'),
+            )
+            .toList();
+
+    // Update UI immediately for queued tasks
     for (var task in activeTasks) {
-      tasksStatus[task.taskId] = task.copyWith(status: 'cancelled');
+      if (task.status == 'queued') {
+        tasksStatus[task.taskId] = task.copyWith(status: 'cancelled');
+      }
     }
     emit(DownloadProgressUpdatedState());
 
+    // Cancel backend tasks - polling will handle status updates
     final List<Future> futures = [];
-    for (var task in activeTasks) {
+    for (var task in tasksNeedingBackendCancel) {
       futures.add(_cancelTaskUsecase(task.taskId));
     }
 
@@ -565,35 +709,27 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
       log("Error while cancelling all: $e");
     }
 
-    _checkPollingStatus();
-  }
-
-  void _checkPollingStatus() {
-    bool anyActive = tasksStatus.values.any(
-      (task) =>
-          task.status != 'completed' &&
-          task.status != 'failed' &&
-          task.status != 'cancelled',
-    );
-
-    if (!anyActive) {
-      _stopPolling();
-    }
+    // Polling will continue until all tasks reach terminal state
   }
 
   Future<void> cancelTask(String taskId) async {
     try {
       await _cancelTaskUsecase(taskId);
+      // Don't set status to 'cancelled' immediately - let the polling
+      // handle the status transition from 'canceling' -> 'cancelled'
+      // This ensures the UI updates properly when backend confirms cancellation
     } catch (e) {
       log("Error cancelling task: $e");
+      // On error, mark as cancelled locally
+      if (tasksStatus.containsKey(taskId)) {
+        tasksStatus[taskId] = tasksStatus[taskId]!.copyWith(
+          status: 'cancelled',
+        );
+        emit(DownloadProgressUpdatedState());
+      }
     }
 
-    if (tasksStatus.containsKey(taskId)) {
-      tasksStatus[taskId] = tasksStatus[taskId]!.copyWith(status: 'cancelled');
-      emit(DownloadProgressUpdatedState());
-    }
-
-    _checkPollingStatus();
+    // Polling will continue until backend confirms 'cancelled' status
   }
 
   void clearTasks() {

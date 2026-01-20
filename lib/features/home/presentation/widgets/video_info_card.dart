@@ -122,7 +122,7 @@ class VideoInfoCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: Image.network(
-                thumbnail,
+                thumbnail ?? '',
                 width: double.infinity,
                 height: MediaQuery.of(context).size.height * 0.3,
                 fit: BoxFit.cover,

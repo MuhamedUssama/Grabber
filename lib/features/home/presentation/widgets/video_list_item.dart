@@ -20,7 +20,7 @@ class VideoListItem extends StatelessWidget {
             border: Border.all(color: Theme.of(context).dividerColor),
           ),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Checkbox(
                 value: context
@@ -37,7 +37,7 @@ class VideoListItem extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Image.network(
-                  entry.thumbnail,
+                  entry.thumbnail ?? '',
                   width: 100,
                   height: 65,
                   fit: BoxFit.cover,

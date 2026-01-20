@@ -40,7 +40,7 @@ class Entries {
   @JsonKey(name: 'channel_name')
   final String? channelName;
   @JsonKey(name: 'channel_url')
-  final String channelUrl;
+  final String? channelUrl;
   @JsonKey(name: 'date_text')
   final String dateText;
   @JsonKey(name: 'duration_text')
@@ -48,7 +48,7 @@ class Entries {
   @JsonKey(name: 'options')
   final List<Options>? options;
   @JsonKey(name: 'thumbnail')
-  final String thumbnail;
+  final String? thumbnail;
   @JsonKey(name: 'title')
   final String title;
   @JsonKey(name: 'url')
@@ -58,11 +58,11 @@ class Entries {
 
   Entries({
     required this.channelName,
-    required this.channelUrl,
+    this.channelUrl,
     required this.dateText,
     required this.durationText,
     required this.options,
-    required this.thumbnail,
+    this.thumbnail,
     required this.title,
     required this.url,
     required this.viewsText,
@@ -76,17 +76,13 @@ class Entries {
 @JsonSerializable()
 class Options {
   @JsonKey(name: 'resolution')
-  final String resolution;
+  final String? resolution;
   @JsonKey(name: 'size_text')
-  final String sizeText;
+  final String? sizeText;
   @JsonKey(name: 'type')
   final String type;
 
-  Options({
-    required this.resolution,
-    required this.sizeText,
-    required this.type,
-  });
+  Options({this.resolution, required this.sizeText, required this.type});
 
   factory Options.fromJson(Map<String, dynamic> json) =>
       _$OptionsFromJson(json);

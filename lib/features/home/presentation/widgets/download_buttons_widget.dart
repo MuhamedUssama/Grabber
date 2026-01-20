@@ -59,7 +59,8 @@ class DownloadButtonsWidget extends StatelessWidget {
                       if (tasks.any(
                         (task) =>
                             task.status == 'pending' ||
-                            task.status == 'processing',
+                            task.status == 'processing' ||
+                            task.status == 'queued',
                       ))
                         ElevatedButton.icon(
                           onPressed: cubit.cancelAllTasks,
@@ -171,7 +172,8 @@ class DownloadButtonsWidget extends StatelessWidget {
                                     if (!isSingle) ...[
                                       const SizedBox(width: 8),
                                       if (task.status == 'processing' ||
-                                          task.status == 'pending')
+                                          task.status == 'pending' ||
+                                          task.status == 'queued')
                                         IconButton(
                                           constraints: const BoxConstraints(),
                                           padding: EdgeInsets.zero,
@@ -201,6 +203,12 @@ class DownloadButtonsWidget extends StatelessWidget {
                                           Icons.error,
                                           size: 20,
                                           color: Colors.red,
+                                        )
+                                      else if (task.status == 'queued')
+                                        const Icon(
+                                          Icons.hourglass_empty_rounded,
+                                          size: 20,
+                                          color: Colors.grey,
                                         ),
                                     ],
                                   ],
@@ -280,7 +288,8 @@ class DownloadButtonsWidget extends StatelessWidget {
                                         Text(
                                           task.isSubtitleMissingError
                                               ? "No subtitles available"
-                                              : task.error!,
+                                              : "Something went wrong during download",
+                                          // : task.error!,
                                           style: textTheme.bodySmall?.copyWith(
                                             color:
                                                 task.isSubtitleMissingError
@@ -348,6 +357,8 @@ class DownloadButtonsWidget extends StatelessWidget {
         return AppColors.error;
       case 'cancelled':
         return Colors.grey;
+      case 'queued':
+        return Colors.orangeAccent;
       default:
         return Theme.of(context).primaryColor;
     }

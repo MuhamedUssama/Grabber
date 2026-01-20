@@ -34,14 +34,14 @@ Map<String, dynamic> _$DataToJson(Data instance) => <String, dynamic>{
 
 Entries _$EntriesFromJson(Map<String, dynamic> json) => Entries(
   channelName: json['channel_name'] as String?,
-  channelUrl: json['channel_url'] as String,
+  channelUrl: json['channel_url'] as String?,
   dateText: json['date_text'] as String,
   durationText: json['duration_text'] as String,
   options:
       (json['options'] as List<dynamic>?)
           ?.map((e) => Options.fromJson(e as Map<String, dynamic>))
           .toList(),
-  thumbnail: json['thumbnail'] as String,
+  thumbnail: json['thumbnail'] as String?,
   title: json['title'] as String,
   url: json['url'] as String,
   viewsText: json['views_text'] as String,
@@ -60,8 +60,8 @@ Map<String, dynamic> _$EntriesToJson(Entries instance) => <String, dynamic>{
 };
 
 Options _$OptionsFromJson(Map<String, dynamic> json) => Options(
-  resolution: json['resolution'] as String,
-  sizeText: json['size_text'] as String,
+  resolution: json['resolution'] as String?,
+  sizeText: json['size_text'] as String?,
   type: json['type'] as String,
 );
 
