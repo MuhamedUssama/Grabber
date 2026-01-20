@@ -4,6 +4,7 @@ import 'package:grabber/core/theme/app_colors.dart';
 import 'package:grabber/features/home/data/models/response/get_info_response_model.dart';
 import 'package:grabber/features/home/presentation/view_model/home_screen_view_model.dart';
 import 'package:grabber/features/home/presentation/widgets/video_list_item.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class VideoInfoCard extends StatelessWidget {
   final GetInfoResponseModel info;
@@ -121,24 +122,31 @@ class VideoInfoCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Image.network(
-                thumbnail ?? '',
+              child: Skeleton.replace(
                 width: double.infinity,
                 height: MediaQuery.of(context).size.height * 0.3,
-                fit: BoxFit.cover,
-                errorBuilder:
-                    (context, error, stackTrace) => Container(
-                      width: double.infinity,
-                      height: MediaQuery.of(context).size.height * 0.3,
-                      color: Theme.of(
-                        context,
-                      ).disabledColor.withValues(alpha: 0.3),
-                      child: Icon(
-                        Icons.broken_image_rounded,
-                        size: 50,
-                        color: Theme.of(context).iconTheme.color,
-                      ),
-                    ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(
+                    thumbnail ?? '',
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    fit: BoxFit.cover,
+                    errorBuilder:
+                        (context, error, stackTrace) => Container(
+                          width: double.infinity,
+                          height: MediaQuery.of(context).size.height * 0.3,
+                          color: Theme.of(
+                            context,
+                          ).disabledColor.withValues(alpha: 0.3),
+                          child: Icon(
+                            Icons.broken_image_rounded,
+                            size: 50,
+                            color: Theme.of(context).iconTheme.color,
+                          ),
+                        ),
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 16),

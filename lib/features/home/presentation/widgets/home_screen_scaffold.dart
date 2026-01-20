@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_animate/flutter_animate.dart' hide ShimmerEffect;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grabber/core/l10n/localization/app_localizations.dart';
+import 'package:grabber/core/theme/app_colors.dart';
 import 'package:grabber/core/utils/app_assets.dart';
+import 'package:grabber/features/home/data/models/response/get_info_response_model.dart';
 import 'package:grabber/features/home/presentation/enums/download_type.dart';
-
 import 'package:grabber/features/home/presentation/view_model/home_screen_states.dart';
 import 'package:grabber/features/home/presentation/view_model/home_screen_view_model.dart';
 import 'package:grabber/features/home/presentation/widgets/download_buttons_widget.dart';
@@ -14,6 +15,7 @@ import 'package:grabber/features/home/presentation/widgets/options_selector.dart
 import 'package:grabber/features/home/presentation/widgets/url_and_browse_widget.dart';
 import 'package:grabber/features/home/presentation/widgets/video_info_card.dart';
 import 'package:lottie/lottie.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class HomeScreenScaffold extends StatefulWidget {
   const HomeScreenScaffold({super.key});
@@ -23,6 +25,33 @@ class HomeScreenScaffold extends StatefulWidget {
 }
 
 class _HomeScreenScaffoldState extends State<HomeScreenScaffold> {
+  bool _isPlaylistUrl(String url) {
+    return url.contains('list=') || url.contains('playlist');
+  }
+
+  GetInfoResponseModel _getDummyInfo({required bool isPlaylist}) {
+    final dummyEntry = Entries(
+      channelName: 'Channel Name',
+      dateText: '2 years ago',
+      durationText: '10:00',
+      options: [],
+      title: 'This is a very long video title that should be skeletonized',
+      url: 'https://dummy.com',
+      viewsText: '1.2M views',
+      thumbnail: null,
+    );
+
+    return GetInfoResponseModel(
+      success: true,
+      data: Data(
+        entries:
+            isPlaylist ? List.generate(5, (_) => dummyEntry) : [dummyEntry],
+        isPlaylist: isPlaylist,
+        playlistTitle: isPlaylist ? 'Playlist Title' : null,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final AppLocalizations locale = AppLocalizations.of(context)!;
@@ -90,10 +119,18 @@ class _HomeScreenScaffoldState extends State<HomeScreenScaffold> {
                             info: vm.currentVideoInfo!,
                           );
                         } else if (state is GetVideoInfoLoadingState) {
-                          content = Center(
+                          final isPlaylist = _isPlaylistUrl(vm.controller.text);
+                          content = Skeletonizer(
                             key: const ValueKey('loading'),
-                            child: LottieBuilder.asset(
-                              AppAnimations.dynamicLoading,
+                            enabled: true,
+                            effect: ShimmerEffect(
+                              baseColor: AppColors.darkWithOpacity,
+                              highlightColor: AppColors.darkTextColor
+                                  .withValues(alpha: 0.05),
+                              duration: 2.seconds,
+                            ),
+                            child: VideoInfoCard(
+                              info: _getDummyInfo(isPlaylist: isPlaylist),
                             ),
                           );
                         } else if (state is GetVideoInfoErrorState) {
@@ -111,6 +148,7 @@ class _HomeScreenScaffoldState extends State<HomeScreenScaffold> {
                       },
                     ),
                   ),
+
                   Expanded(
                     flex: 1,
                     child: Column(

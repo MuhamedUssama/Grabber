@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grabber/features/home/data/models/response/get_info_response_model.dart';
 import 'package:grabber/features/home/presentation/view_model/home_screen_states.dart';
 import 'package:grabber/features/home/presentation/view_model/home_screen_view_model.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class VideoListItem extends StatelessWidget {
   final Entries entry;
@@ -36,24 +37,31 @@ class VideoListItem extends StatelessWidget {
               const SizedBox(width: 8),
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  entry.thumbnail ?? '',
+                child: Skeleton.replace(
                   width: 100,
                   height: 65,
-                  fit: BoxFit.cover,
-                  errorBuilder:
-                      (context, error, stackTrace) => Container(
-                        width: 100,
-                        height: 65,
-                        color:
-                            Theme.of(
-                              context,
-                            ).colorScheme.surfaceContainerHighest,
-                        child: Icon(
-                          Icons.broken_image_rounded,
-                          color: Theme.of(context).iconTheme.color,
-                        ),
-                      ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      entry.thumbnail ?? '',
+                      width: 100,
+                      height: 65,
+                      fit: BoxFit.cover,
+                      errorBuilder:
+                          (context, error, stackTrace) => Container(
+                            width: 100,
+                            height: 65,
+                            color:
+                                Theme.of(
+                                  context,
+                                ).colorScheme.surfaceContainerHighest,
+                            child: Icon(
+                              Icons.broken_image_rounded,
+                              color: Theme.of(context).iconTheme.color,
+                            ),
+                          ),
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
