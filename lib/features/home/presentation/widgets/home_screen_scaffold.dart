@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grabber/core/l10n/localization/app_localizations.dart';
 import 'package:grabber/core/utils/app_assets.dart';
@@ -34,9 +35,18 @@ class _HomeScreenScaffoldState extends State<HomeScreenScaffold> {
           spacing: 24,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(locale.appName, style: textTheme.displayLarge),
-            const UrlAndBrowseWidget(),
-            const FolderPathWidget(),
+            Text(locale.appName, style: textTheme.displayLarge)
+                .animate()
+                .fadeIn(duration: 600.ms)
+                .slideX(begin: -0.1, end: 0, curve: Curves.easeOutQuad),
+            const UrlAndBrowseWidget()
+                .animate()
+                .fadeIn(delay: 200.ms, duration: 600.ms)
+                .slideY(begin: 0.1, end: 0),
+            const FolderPathWidget()
+                .animate()
+                .fadeIn(delay: 300.ms, duration: 600.ms)
+                .slideY(begin: 0.1, end: 0),
             Expanded(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,27 +65,52 @@ class _HomeScreenScaffoldState extends State<HomeScreenScaffold> {
                               curr is OptionsUpdatedState,
                       builder: (context, state) {
                         final vm = context.read<HomeScreenViewModel>();
+
+                        Widget content;
                         if (state is GetVideoInfoSuccessState) {
-                          return VideoInfoCard(info: state.videoInfo);
+                          content = VideoInfoCard(
+                            key: ValueKey(
+                              state.videoInfo.data.entries.firstOrNull?.url ??
+                                  'video',
+                            ),
+                            info: state.videoInfo,
+                          );
                         } else if (state is OptionsUpdatedState &&
                             vm.currentVideoInfo != null) {
-                          return VideoInfoCard(info: vm.currentVideoInfo!);
+                          content = VideoInfoCard(
+                            key: ValueKey(
+                              vm
+                                      .currentVideoInfo!
+                                      .data
+                                      .entries
+                                      .firstOrNull
+                                      ?.url ??
+                                  'video-updated',
+                            ),
+                            info: vm.currentVideoInfo!,
+                          );
                         } else if (state is GetVideoInfoLoadingState) {
-                          return Center(
+                          content = Center(
+                            key: const ValueKey('loading'),
                             child: LottieBuilder.asset(
                               AppAnimations.dynamicLoading,
                             ),
                           );
                         } else if (state is GetVideoInfoErrorState) {
-                          return Center(
+                          content = Center(
                             child: LottieBuilder.asset(AppAnimations.error),
                           );
+                        } else {
+                          content = const SizedBox.shrink();
                         }
-                        return const SizedBox.shrink();
+
+                        return content
+                            .animate(key: ValueKey(state.runtimeType))
+                            .fadeIn(duration: 400.ms)
+                            .scale(begin: const Offset(0.98, 0.98));
                       },
                     ),
                   ),
-
                   Expanded(
                     flex: 1,
                     child: Column(
@@ -89,26 +124,29 @@ class _HomeScreenScaffoldState extends State<HomeScreenScaffold> {
                                   curr is HomeScreenInitialState,
                           builder: (context, state) {
                             if (state is GetVideoInfoSuccessState) {
-                              return const OptionsSelector();
+                              return const OptionsSelector()
+                                  .animate()
+                                  .fadeIn(duration: 400.ms)
+                                  .slideX(begin: 0.1, end: 0);
                             }
                             return const SizedBox.shrink();
                           },
                         ),
-
                         BlocBuilder<HomeScreenViewModel, HomeScreenStates>(
                           builder: (context, state) {
+                            Widget? content;
                             if (state is DownloadProgressState) {
-                              return DownloadProgressSection(
+                              content = DownloadProgressSection(
+                                key: const ValueKey('progress'),
                                 progress: state.progress,
                                 status: state.status,
                               );
-                            }
-
-                            if (context
+                            } else if (context
                                     .read<HomeScreenViewModel>()
                                     .videoTitle !=
                                 null) {
-                              return DownloadButtonsWidget(
+                              content = DownloadButtonsWidget(
+                                key: const ValueKey('buttons'),
                                 onDownloadPressed: () {
                                   final cubit =
                                       context.read<HomeScreenViewModel>();
@@ -134,6 +172,13 @@ class _HomeScreenScaffoldState extends State<HomeScreenScaffold> {
                                 },
                               );
                             }
+
+                            if (content != null) {
+                              return content
+                                  .animate(key: ValueKey(content.runtimeType))
+                                  .fadeIn(duration: 400.ms)
+                                  .slideY(begin: 0.1, end: 0);
+                            }
                             return const SizedBox.shrink();
                           },
                         ),
@@ -147,7 +192,7 @@ class _HomeScreenScaffoldState extends State<HomeScreenScaffold> {
               locale.appVersion,
               style: textTheme.bodySmall,
               textAlign: TextAlign.center,
-            ),
+            ).animate().fadeIn(delay: 1.seconds),
           ],
         ),
       ),
