@@ -6,9 +6,11 @@ abstract class AppTheme {
   static ThemeData darkTheme = ThemeData(
     scaffoldBackgroundColor: AppColors.dark,
     primaryColor: AppColors.darkTextColor,
-
+    scrollbarTheme: ScrollbarThemeData(
+      thumbColor: WidgetStateProperty.all(AppColors.darkHeadTextColor),
+    ),
     textTheme: TextTheme(
-      displayLarge: GoogleFonts.righteous(
+      displayLarge: GoogleFonts.risque(
         color: AppColors.darkTextColor,
         fontSize: 56,
         fontWeight: FontWeight.bold,
@@ -28,12 +30,19 @@ abstract class AppTheme {
         fontSize: 12,
         fontWeight: FontWeight.w400,
       ),
+      titleLarge: GoogleFonts.poppins(
+        color: AppColors.darkTextColor,
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+      ),
     ),
 
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: AppColors.darkTextColor,
       selectionColor: AppColors.darkTextColor.withValues(alpha: 0.2),
     ),
+
+    dividerColor: AppColors.darkWithOpacity,
 
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
@@ -100,6 +109,18 @@ abstract class AppTheme {
 
     snackBarTheme: SnackBarThemeData(
       backgroundColor: AppColors.darkWithOpacity,
+    ),
+
+    checkboxTheme: CheckboxThemeData(
+      fillColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return AppColors.darkTextColor;
+        }
+        return AppColors.transparent;
+      }),
+      checkColor: WidgetStateProperty.all(AppColors.dark),
+      side: const BorderSide(color: AppColors.darkTextColor, width: 2),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
     ),
   );
 }

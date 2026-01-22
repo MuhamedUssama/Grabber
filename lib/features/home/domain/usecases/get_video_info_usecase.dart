@@ -1,10 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:grabber/core/network/exceptions.dart';
 import 'package:grabber/features/home/data/models/request/get_video_info_request.dart';
+import 'package:grabber/features/home/data/models/response/get_info_response_model.dart';
 import 'package:grabber/features/home/domain/repository/home_repository.dart';
 import 'package:injectable/injectable.dart';
-
-import '../../data/models/response/get_video_info_model.dart';
 
 @injectable
 class GetVideoInfoUsecase {
@@ -12,7 +11,7 @@ class GetVideoInfoUsecase {
 
   GetVideoInfoUsecase(this._repository);
 
-  Future<Either<ServerException, GetVideoInfoModel>> call(
-    GetVideoInfoRequest url,
-  ) async => _repository.getVideoInfo(url);
+  Future<Either<ServerException, GetInfoResponseModel>> call(
+    GetVideoInfoRequest request,
+  ) async => _repository.getVideoInfo(request);
 }

@@ -30,14 +30,13 @@ class FolderPathWidget extends StatelessWidget {
 
         Visibility(
           visible: context.select(
-            (HomeScreenViewModel vm) => vm.quality != null,
+            (HomeScreenViewModel vm) => vm.selectedQuality != null,
           ),
           child: BlocBuilder<HomeScreenViewModel, HomeScreenStates>(
-            buildWhen:
-                (previous, current) => current is UpdateQualityValueState,
+            buildWhen: (previous, current) => current is OptionsUpdatedState,
             builder: (context, state) {
               return Text(
-                'Resolution selected: ${context.read<HomeScreenViewModel>().quality!}',
+                'Resolution selected: ${context.read<HomeScreenViewModel>().selectedQuality!}',
                 style: textTheme.bodySmall,
                 textAlign: TextAlign.start,
               );

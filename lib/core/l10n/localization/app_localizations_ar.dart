@@ -42,5 +42,48 @@ class AppLocalizationsAr extends AppLocalizations {
   String get downloadVideoWithoutAudio => 'تحميل الفيديو بدون صوت';
 
   @override
-  String get appVersion => 'Version 1.0.0 Developed by: Mohamed Osama © 2025 Mohamed Osama. All rights reserved.';
+  String get appVersion =>
+      'Version 1.0.0 Developed by: Mohamed Osama © 2025 Mohamed Osama. All rights reserved.';
+
+  @override
+  String get urlHint => 'ضع رابط الفيديو هنا';
+
+  @override
+  String get startDownload => 'بدء التحميل';
+
+  @override
+  String get selectFolder => 'اختر مجلد الحفظ';
+
+  @override
+  String get cancel => 'إلغاء';
+
+  @override
+  String get quality => 'الجودة';
+
+  @override
+  String get format => 'الصيغة';
+
+  @override
+  String get language => 'اللغة';
+
+  @override
+  String get videoWithAudio => 'فيديو مع صوت';
+
+  @override
+  String get audioOnly => 'صوت فقط';
+
+  @override
+  String get original => 'أصلي';
+
+  @override
+  String get unknown => 'غير معروف';
+
+  @override
+  String get noContentLoaded => 'لا يوجد محتوى';
+
+  @override
+  String get pickFolder => 'اختر مجلد الحفظ';
+
+  @override
+  String get somethingWentWrong => 'حدث خطأ ما، الرجاء المحاولة مرة أخرى';
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:grabber/core/l10n/localization/app_localizations.dart';
@@ -18,7 +20,12 @@ class HomeScreen extends StatelessWidget {
         if (state is ValidateUrlState) {
           SnakBarUtils.showSnakbar(context, Icons.error_rounded, state.message);
         } else if (state is GetVideoInfoErrorState) {
-          SnakBarUtils.showSnakbar(context, Icons.error, state.error);
+          log(state.error);
+          SnakBarUtils.showSnakbar(
+            context,
+            Icons.error,
+            locale.somethingWentWrong,
+          );
         } else if (state is SelectFolderPathSuccessState) {
           SnakBarUtils.showSnakbar(
             context,
@@ -26,49 +33,38 @@ class HomeScreen extends StatelessWidget {
             locale.folderSelected,
           );
         } else if (state is SelectFolderPathFailureState) {
+          log(state.message ?? "SelectFolderPathFailureState");
           SnakBarUtils.showSnakbar(
             context,
             Icons.error_rounded,
-            state.message ?? locale.noFolderSelected,
+            locale.noFolderSelected,
           );
-        } else if (state is DownloadAudioFailureState) {
+        } else if (state is DownloadFailureState) {
+          log(state.error);
           SnakBarUtils.showSnakbar(
             context,
             Icons.error_rounded,
-            state.error ?? locale.somethingWentWorng,
+            locale.somethingWentWrong,
           );
-        } else if (state is DownloadVideoFailureState) {
-          SnakBarUtils.showSnakbar(
-            context,
-            Icons.error_rounded,
-            state.error ?? locale.somethingWentWorng,
-          );
-        } else if (state is DownloadVideoWithoutAudioFailureState) {
-          SnakBarUtils.showSnakbar(
-            context,
-            Icons.error_rounded,
-            state.error ?? locale.somethingWentWorng,
-          );
-        } else if (state is DownloadAudioSuccessState) {
+        } else if (state is DownloadCompletedState) {
           SnakBarUtils.showSnakbar(
             context,
             Icons.check_circle_outline_rounded,
-            'Audio downloaded successfully in ${context.read<HomeScreenViewModel>().path}',
+            'Download Completed: ${state.filePath}',
           );
-        } else if (state is DownloadVideoSuccessState) {
+        } else if (state is DownloadCancelledState) {
           SnakBarUtils.showSnakbar(
             context,
-            Icons.check_circle_outline_rounded,
-            'Video downloaded successfully in ${context.read<HomeScreenViewModel>().path}',
-          );
-        } else if (state is DownloadVideoWithoutAudioSuccessState) {
-          SnakBarUtils.showSnakbar(
-            context,
-            Icons.check_circle_outline_rounded,
-            'Video downloaded successfully in ${context.read<HomeScreenViewModel>().path}',
+            Icons.info_outline_rounded,
+            locale.cancel,
           );
         } else if (state is GetDownloadsDirectoryFailureState) {
-          SnakBarUtils.showSnakbar(context, Icons.error_rounded, state.error);
+          log(state.error);
+          SnakBarUtils.showSnakbar(
+            context,
+            Icons.error_rounded,
+            locale.somethingWentWrong,
+          );
         }
       },
       child: const HomeScreenScaffold(),

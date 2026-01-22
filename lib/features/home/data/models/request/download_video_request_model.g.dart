@@ -9,9 +9,11 @@ part of 'download_video_request_model.dart';
 DownloadVideoRequestModel _$DownloadVideoRequestModelFromJson(
   Map<String, dynamic> json,
 ) => DownloadVideoRequestModel(
-  url: json['url'] as String?,
-  quality: json['quality'] as String?,
+  url: json['url'] as String,
+  quality: json['quality'] as String,
   outputDir: json['output_dir'] as String?,
+  withAudio: json['with_audio'] as bool,
+  outputFormat: json['output_format'] as String?,
 );
 
 Map<String, dynamic> _$DownloadVideoRequestModelToJson(
@@ -20,4 +22,6 @@ Map<String, dynamic> _$DownloadVideoRequestModelToJson(
   'url': instance.url,
   'quality': instance.quality,
   'output_dir': instance.outputDir,
+  'with_audio': instance.withAudio,
+  'output_format': instance.outputFormat,
 };
