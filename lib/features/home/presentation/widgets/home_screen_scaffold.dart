@@ -170,55 +170,62 @@ class _HomeScreenScaffoldState extends State<HomeScreenScaffold> {
                             return const SizedBox.shrink();
                           },
                         ),
-                        BlocBuilder<HomeScreenViewModel, HomeScreenStates>(
-                          builder: (context, state) {
-                            Widget? content;
-                            if (state is DownloadProgressState) {
-                              content = DownloadProgressSection(
-                                key: const ValueKey('progress'),
-                                progress: state.progress,
-                                status: state.status,
-                              );
-                            } else if (context
-                                    .read<HomeScreenViewModel>()
-                                    .videoTitle !=
-                                null) {
-                              content = DownloadButtonsWidget(
-                                key: const ValueKey('buttons'),
-                                onDownloadPressed: () {
-                                  final cubit =
-                                      context.read<HomeScreenViewModel>();
-                                  final quality = cubit.selectedQuality;
-                                  final type = cubit.selectedType;
-                                  final format = cubit.selectedFormat;
-                                  final lang = cubit.selectedLang;
+                        Flexible(
+                          child: BlocBuilder<
+                            HomeScreenViewModel,
+                            HomeScreenStates
+                          >(
+                            builder: (context, state) {
+                              Widget? content;
+                              if (state is DownloadProgressState) {
+                                content = DownloadProgressSection(
+                                  key: const ValueKey('progress'),
+                                  progress: state.progress,
+                                  status: state.status,
+                                );
+                              } else if (context
+                                      .read<HomeScreenViewModel>()
+                                      .videoTitle !=
+                                  null) {
+                                content = DownloadButtonsWidget(
+                                  key: const ValueKey('buttons'),
+                                  onDownloadPressed: () {
+                                    final cubit =
+                                        context.read<HomeScreenViewModel>();
+                                    final quality = cubit.selectedQuality;
+                                    final type = cubit.selectedType;
+                                    final format = cubit.selectedFormat;
+                                    final lang = cubit.selectedLang;
 
-                                  if (type == DownloadType.video &&
-                                      quality != null) {
-                                    cubit.downloadVideo(
-                                      withAudio: true,
-                                      outputFormat: format,
-                                    );
-                                  } else if (type == DownloadType.audio) {
-                                    cubit.downloadAudio(
-                                      outputFormat:
-                                          format == 'original' ? null : format,
-                                    );
-                                  } else if (type == DownloadType.subtitle) {
-                                    cubit.downloadSubtitle(lang: lang);
-                                  }
-                                },
-                              );
-                            }
+                                    if (type == DownloadType.video &&
+                                        quality != null) {
+                                      cubit.downloadVideo(
+                                        withAudio: true,
+                                        outputFormat: format,
+                                      );
+                                    } else if (type == DownloadType.audio) {
+                                      cubit.downloadAudio(
+                                        outputFormat:
+                                            format == 'original'
+                                                ? null
+                                                : format,
+                                      );
+                                    } else if (type == DownloadType.subtitle) {
+                                      cubit.downloadSubtitle(lang: lang);
+                                    }
+                                  },
+                                );
+                              }
 
-                            if (content != null) {
-                              return content
-                                  .animate(key: ValueKey(content.runtimeType))
-                                  .fadeIn(duration: 400.ms)
-                                  .slideY(begin: 0.1, end: 0);
-                            }
-                            return const SizedBox.shrink();
-                          },
+                              if (content != null) {
+                                return content
+                                    .animate(key: ValueKey(content.runtimeType))
+                                    .fadeIn(duration: 400.ms)
+                                    .slideY(begin: 0.1, end: 0);
+                              }
+                              return const SizedBox.shrink();
+                            },
+                          ),
                         ),
                       ],
                     ),

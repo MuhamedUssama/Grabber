@@ -12,6 +12,7 @@
 .swiftpm/
 migrate_working_dir/
 assets/backend.zip
+installers/
 
 # IntelliJ related
 *.iml

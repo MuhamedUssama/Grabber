@@ -43,6 +43,7 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
   ) : super(HomeScreenInitialState());
 
   Timer? _pollingTimer;
+  bool _isPolling = false;
   String? _currentTaskId;
   String? path;
   String? videoTitle;
@@ -582,73 +583,81 @@ class HomeScreenViewModel extends Cubit<HomeScreenStates> {
     _pollingTimer = Timer.periodic(const Duration(milliseconds: 500), (
       timer,
     ) async {
+      if (_isPolling) return;
+
       if (tasksStatus.isEmpty) {
         _stopPolling();
         return;
       }
 
-      bool anyActive = false;
+      _isPolling = true;
 
-      for (final TaskStatus currentStatus in tasksStatus.values) {
-        final String status = currentStatus.status;
-        if (status == 'completed' ||
-            status == 'failed' ||
-            status == 'cancelled' ||
-            status == 'queued') {
-          continue;
+      try {
+        bool anyActive = false;
+
+        for (final TaskStatus currentStatus in tasksStatus.values) {
+          final String status = currentStatus.status;
+          if (status == 'completed' ||
+              status == 'failed' ||
+              status == 'cancelled' ||
+              status == 'queued') {
+            continue;
+          }
+
+          // Keep polling for 'canceling', 'pending', and 'processing' states
+          anyActive = true;
+          final taskId = currentStatus.taskId;
+          final result = await _taskStatusUsecase(taskId);
+
+          result.fold(
+            (error) {
+              tasksStatus[taskId] = currentStatus.copyWith(
+                status: 'failed',
+                error: error.message,
+              );
+            },
+            (statusResponse) {
+              final data = statusResponse.data;
+              if (data != null) {
+                final newStatus = data.status ?? 'processing';
+                final progress = (data.progress ?? 0.0) / 100.0;
+
+                if (newStatus == 'completed') {
+                  tasksStatus[taskId] = currentStatus.copyWith(
+                    status: 'completed',
+                    progress: 1.0,
+                    resultPath: data.result,
+                  );
+                } else if (newStatus == 'failed') {
+                  tasksStatus[taskId] = currentStatus.copyWith(
+                    status: 'failed',
+                    error: data.error,
+                  );
+                } else if (newStatus == 'cancelled') {
+                  tasksStatus[taskId] = currentStatus.copyWith(
+                    status: 'cancelled',
+                  );
+                } else {
+                  tasksStatus[taskId] = currentStatus.copyWith(
+                    status: newStatus,
+                    progress: progress,
+                    speed: data.speed,
+                    eta: data.eta,
+                    totalSize: data.totalSize,
+                  );
+                }
+              }
+            },
+          );
         }
 
-        // Keep polling for 'canceling', 'pending', and 'processing' states
-        anyActive = true;
-        final taskId = currentStatus.taskId;
-        final result = await _taskStatusUsecase(taskId);
+        emit(DownloadProgressUpdatedState());
 
-        result.fold(
-          (error) {
-            tasksStatus[taskId] = currentStatus.copyWith(
-              status: 'failed',
-              error: error.message,
-            );
-          },
-          (statusResponse) {
-            final data = statusResponse.data;
-            if (data != null) {
-              final newStatus = data.status ?? 'processing';
-              final progress = (data.progress ?? 0.0) / 100.0;
-
-              if (newStatus == 'completed') {
-                tasksStatus[taskId] = currentStatus.copyWith(
-                  status: 'completed',
-                  progress: 1.0,
-                  resultPath: data.result,
-                );
-              } else if (newStatus == 'failed') {
-                tasksStatus[taskId] = currentStatus.copyWith(
-                  status: 'failed',
-                  error: data.error,
-                );
-              } else if (newStatus == 'cancelled') {
-                tasksStatus[taskId] = currentStatus.copyWith(
-                  status: 'cancelled',
-                );
-              } else {
-                tasksStatus[taskId] = currentStatus.copyWith(
-                  status: newStatus,
-                  progress: progress,
-                  speed: data.speed,
-                  eta: data.eta,
-                  totalSize: data.totalSize,
-                );
-              }
-            }
-          },
-        );
-      }
-
-      emit(DownloadProgressUpdatedState());
-
-      if (!anyActive) {
-        _stopPolling();
+        if (!anyActive) {
+          _stopPolling();
+        }
+      } finally {
+        _isPolling = false;
       }
     });
   }
