@@ -7,8 +7,7 @@ import 'package:injectable/injectable.dart';
 @injectable
 class DownloadVideoUsecase {
   final HomeRepository _repository;
-
-  DownloadVideoUsecase(this._repository);
+  const DownloadVideoUsecase(this._repository);
 
   Future<Either<ServerException, String>> call(
     DownloadVideoRequestModel request,

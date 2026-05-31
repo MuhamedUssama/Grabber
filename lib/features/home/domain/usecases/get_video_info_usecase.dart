@@ -8,8 +8,7 @@ import 'package:injectable/injectable.dart';
 @injectable
 class GetVideoInfoUsecase {
   final HomeRepository _repository;
-
-  GetVideoInfoUsecase(this._repository);
+  const GetVideoInfoUsecase(this._repository);
 
   Future<Either<ServerException, GetInfoResponseModel>> call(
     GetVideoInfoRequest request,

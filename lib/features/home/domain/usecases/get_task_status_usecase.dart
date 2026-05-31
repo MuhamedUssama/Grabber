@@ -7,8 +7,7 @@ import 'package:injectable/injectable.dart';
 @injectable
 class GetTaskStatusUseCase {
   final HomeRepository _repository;
-
-  GetTaskStatusUseCase(this._repository);
+  const GetTaskStatusUseCase(this._repository);
 
   Future<Either<ServerException, DownloadStatusResponseModel>> call(
     String taskId,

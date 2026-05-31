@@ -12,7 +12,7 @@ class TaskStatus {
   final int? eta;
   final String? thumbnailUrl;
 
-  TaskStatus({
+  const TaskStatus({
     required this.taskId,
     required this.title,
     required this.url,

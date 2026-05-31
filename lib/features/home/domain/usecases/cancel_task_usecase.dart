@@ -6,8 +6,7 @@ import 'package:injectable/injectable.dart';
 @injectable
 class CancelTaskUseCase {
   final HomeRepository _repository;
-
-  CancelTaskUseCase(this._repository);
+  const CancelTaskUseCase(this._repository);
 
   Future<Either<ServerException, void>> call(String taskId) async =>
       _repository.cancelTask(taskId);

@@ -20,8 +20,8 @@ class Grabber extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       theme: AppTheme.darkTheme,
-      supportedLocales: [Locale('en'), Locale('ar')],
-      locale: Locale('en'),
+      supportedLocales: const [Locale('en'), Locale('ar')],
+      locale: const Locale('en'),
       routes: AppRouter.routes(),
       initialRoute: RoutesName.splashScreen,
     );

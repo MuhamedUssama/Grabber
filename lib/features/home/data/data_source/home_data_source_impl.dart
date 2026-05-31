@@ -19,8 +19,7 @@ import 'package:injectable/injectable.dart';
 @Injectable(as: HomeDataSource)
 class HomeDataSourceImpl implements HomeDataSource {
   final RetrofitClient _retrofitClient;
-
-  HomeDataSourceImpl(this._retrofitClient);
+  const HomeDataSourceImpl(this._retrofitClient);
 
   @override
   Future<Either<ServerException, GetInfoResponseModel>> getVideoInfo(

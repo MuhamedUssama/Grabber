@@ -7,8 +7,7 @@ import 'package:injectable/injectable.dart';
 @injectable
 class DownloadAudioUsecase {
   final HomeRepository _repository;
-
-  DownloadAudioUsecase(this._repository);
+  const DownloadAudioUsecase(this._repository);
 
   Future<Either<ServerException, String>> call(
     DownloadAudioRequestModel request,

@@ -14,8 +14,7 @@ import 'package:injectable/injectable.dart';
 @Injectable(as: HomeRepository)
 class HomeRepositoryImpl implements HomeRepository {
   final HomeDataSource _dataSource;
-
-  HomeRepositoryImpl(this._dataSource);
+  const HomeRepositoryImpl(this._dataSource);
 
   @override
   Future<Either<ServerException, GetInfoResponseModel>> getVideoInfo(

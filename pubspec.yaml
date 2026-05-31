@@ -55,3 +55,4 @@ flutter:
   assets:
     - assets/animations/
     - assets/backend.zip
+    - assets/server.zip

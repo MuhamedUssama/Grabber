@@ -11,7 +11,7 @@ Future<void> main() async {
 
   await windowManager.ensureInitialized();
 
-  WindowOptions options = const WindowOptions(
+  const WindowOptions options = WindowOptions(
     minimumSize: Size(800, 700),
     size: Size(1200, 700),
     center: true,
@@ -30,7 +30,7 @@ Future<void> main() async {
 
   await BackendService.startServer();
 
-  runApp(GrabberApp());
+  runApp(const GrabberApp());
 }
 
 class GrabberApp extends StatefulWidget {

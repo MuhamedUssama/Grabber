@@ -285,16 +285,18 @@ class DownloadButtonsWidget extends StatelessWidget {
                                                   ? Colors.amber[700]
                                                   : AppColors.error,
                                         ),
-                                        Text(
-                                          task.isSubtitleMissingError
-                                              ? "No subtitles available"
-                                              : "Something went wrong during download",
-                                          // : task.error!,
-                                          style: textTheme.bodySmall?.copyWith(
-                                            color:
-                                                task.isSubtitleMissingError
-                                                    ? Colors.amber[700]
-                                                    : AppColors.error,
+                                        Expanded(
+                                          child: Text(
+                                            task.isSubtitleMissingError
+                                                ? "No subtitles available"
+                                                : "Something went wrong during download",
+                                            // : task.error!,
+                                            style: textTheme.bodySmall?.copyWith(
+                                              color:
+                                                  task.isSubtitleMissingError
+                                                      ? Colors.amber[700]
+                                                      : AppColors.error,
+                                            ),
                                           ),
                                         ),
                                       ],

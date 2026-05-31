@@ -7,8 +7,7 @@ import 'package:injectable/injectable.dart';
 @injectable
 class DownloadSubtitleUsecase {
   final HomeRepository _repository;
-
-  DownloadSubtitleUsecase(this._repository);
+  const DownloadSubtitleUsecase(this._repository);
 
   Future<Either<ServerException, String>> call(
     DownloadSubtitleRequestModel request,

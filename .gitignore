@@ -11,6 +11,7 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
+assets/server.zip
 assets/backend.zip
 
 # IntelliJ related
